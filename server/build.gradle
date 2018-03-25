@@ -1,0 +1,29 @@
+buildscript {
+    dependencies {
+        classpath 'mysql:mysql-connector-java:5.1.37'
+    }
+}
+
+plugins {
+    id 'org.flywaydb.flyway' version '5.0.7'
+}
+
+def ENV = new HashMap<String, String>();
+
+def scanner = new Scanner(project.file('src/.env'))
+
+while (scanner.hasNextLine()) {
+    def line = scanner.nextLine()
+    if (line.length() < 1) { continue }
+
+    line = line.split('=')
+    ENV.put(line[0].trim(), line[1].trim())
+}
+
+flyway {
+    url = ENV.get('DATABASE_URL')
+    user = ENV.get('DATABASE_USER')
+    password = ENV.get('DATABASE_PASSWORD')
+    locations = ['filesystem:src/main/resources/database']
+}
+
