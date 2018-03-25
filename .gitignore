@@ -1,3 +1,8 @@
+# CUSTOM
+# Figure out how to share useful info from it and not garbage
+.idea/dataSources.xml
+
+
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and WebStorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
