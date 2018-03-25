@@ -1,0 +1,3 @@
+rootProject.name = 'OopProjekt'
+
+include ':server', ':client', ':shared'
