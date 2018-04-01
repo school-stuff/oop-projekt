@@ -6,11 +6,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.Socket;
-
 
 public class LoginWindow extends Application {
 
@@ -18,23 +13,34 @@ public class LoginWindow extends Application {
     private PasswordField passwordField = new PasswordField();
     private Label infoLabel = new Label();
     private Button connectButton = new Button("Connect");
+    private TextField ipField = new TextField("localhost:3306");
+    private ClientSocket cs = ClientSocket.getInstance();
 
     @Override
     public void start(Stage primaryStage) {
 
         connectButton.setOnAction(event -> {
+            String[] ipAddress = ipField.getText().split(":");
+            ClientSocket cs = ClientSocket.getInstance();
+
             blockFields(true);
             infoLabel.setText("Establishing connection...");
-            try {
-                if (establishConnection(usernameField.getText(), passwordField.getText().hashCode())) {
-                    infoLabel.setText("Connection established!");
+            if (cs.socketTryConnect(ipAddress[0], Integer.parseInt(ipAddress[1]))) {
+                infoLabel.setText("Logging in...");
+                if (cs.userLogin(usernameField.getText(), passwordField.getText())) {
+                    infoLabel.setText("Directing to waiting list...");
+                    if (cs.addUserToWaitList()) {
+                        infoLabel.setText("Success!");
+                        Platform.exit();
+                    } else {
+                        infoLabel.setText("Waiting list full/Game is in progress!");
+                    }
                 } else {
-                    infoLabel.setText("Wrong username or password!");
+                    infoLabel.setText("Unknown username or password!");
                     blockFields(false);
-                    Platform.exit();
                 }
-            } catch (IOException e) {
-                infoLabel.setText("Connection failed");
+            } else {
+                infoLabel.setText("Connection failed!");
                 blockFields(false);
             }
         });
@@ -44,38 +50,23 @@ public class LoginWindow extends Application {
         grid.setHgap(10);
         grid.setVgap(10);
 
-        grid.add(usernameField, 1, 0);
-        grid.add(passwordField, 1, 1);
-        grid.add(new Label("Username:"), 0, 0);
-        grid.add(new Label("Password:"), 0, 1);
-        grid.add(connectButton, 0, 2);
-        grid.add(infoLabel, 1, 2);
-        primaryStage.setScene(new Scene(grid, 256, 128));
+        grid.add(usernameField, 1, 1);
+        grid.add(passwordField, 1, 2);
+        grid.add(new Label("Username:"), 0, 1);
+        grid.add(new Label("Password:"), 0, 2);
+        grid.add(connectButton, 0, 3);
+        grid.add(infoLabel, 1, 3);
+        grid.add(ipField,0,0,2,1);
+        primaryStage.setScene(new Scene(grid, 256, 180));
         primaryStage.setTitle("Log-in");
         primaryStage.setResizable(false);
         primaryStage.show();
-    }
-
-    public boolean establishConnection(String username, int password) throws IOException {
-        try (Socket socket = new Socket("localhost", 3306);
-             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-             DataInputStream in = new DataInputStream(socket.getInputStream())) {
-
-            out.writeUTF(username);
-            out.writeInt(password);
-
-            if (in.readBoolean()) {
-                Client.connection(socket, out, in);
-                return true;
-            } else {
-                return false;
-            }
-        }
     }
 
     private void blockFields(boolean value) {
         usernameField.setDisable(value);
         passwordField.setDisable(value);
         connectButton.setDisable(value);
+        ipField.setDisable(value);
     }
 }
