@@ -7,12 +7,13 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class Client {
+public class AuthModel {
     private final Socket socket;
 
-    public Client(Socket socket) {
+    public AuthModel(Socket socket) {
         this.socket = socket;
-        new Thread(this::listenAuth).start();
+
+        listenAuth();
     }
 
     private Auth.AuthResponse handleLogin(Auth.LoginData loginData) {

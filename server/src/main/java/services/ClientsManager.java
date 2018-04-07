@@ -1,6 +1,6 @@
 package services;
 
-import models.Client;
+import models.ClientModel;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -15,7 +15,7 @@ public class ClientsManager {
         return ourInstance;
     }
 
-    private final List<Client> clients = new ArrayList<>();
+    private final List<ClientModel> clients = new ArrayList<>();
 
     private ClientsManager() {
         awaitConnections();
@@ -40,6 +40,6 @@ public class ClientsManager {
     }
 
     private void handleNewClient(Socket socket) {
-        clients.add(new Client(socket));
+        clients.add(new ClientModel(socket));
     }
 }
