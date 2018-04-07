@@ -1,0 +1,29 @@
+syntax = 'proto3';
+
+package shared.user.auth;
+
+message AuthMessage {
+    oneof authMessage {
+        LoginData loginData = 2;
+        RegisterData registerData = 3;
+    }
+}
+
+message LoginData {
+    string email = 1;
+    string password = 2;
+}
+
+message RegisterData {
+    string email = 1;
+    string password = 2;
+}
+
+message AuthResponse {
+    MessageType message = 1;
+
+    enum MessageType {
+        Error = 0;
+        Success = 1;
+    }
+}
