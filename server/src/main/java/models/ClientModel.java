@@ -1,6 +1,8 @@
 package models;
 
 
+import io.reactivex.Observable;
+
 import java.net.Socket;
 
 public class ClientModel {
@@ -8,10 +10,9 @@ public class ClientModel {
 
     public ClientModel(Socket socket) {
         this.socket = socket;
-        new Thread(this::handleClient).start();
     }
 
-    private void handleClient() {
-        new AuthModel(socket);
+    public Observable authenticate() {
+        return new AuthModel(socket).authenticate();
     }
 }

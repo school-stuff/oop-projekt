@@ -1,5 +1,7 @@
 package models;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.ReplaySubject;
 import shared.user.auth.Auth;
 
 import java.io.IOException;
@@ -12,8 +14,21 @@ public class AuthModel {
 
     public AuthModel(Socket socket) {
         this.socket = socket;
+    }
 
-        listenAuth();
+    public Observable authenticate() {
+        ReplaySubject<Object> subject = ReplaySubject.create(1);
+
+        try {
+            listenAuth();
+            subject.onNext(true);
+        } catch (IOException e) {
+            subject.onError(e);
+        } finally {
+            subject.onComplete();
+        }
+
+        return subject;
     }
 
     private Auth.AuthResponse handleLogin(Auth.LoginData loginData) {
@@ -28,7 +43,7 @@ public class AuthModel {
             .build();
     }
 
-    private void listenAuth() {
+    private void listenAuth() throws IOException {
         try (
             InputStream input = socket.getInputStream();
             OutputStream output = socket.getOutputStream()
@@ -47,9 +62,6 @@ public class AuthModel {
 
             response.writeDelimitedTo(output);
 
-        } catch (IOException e) {
-            // TODO: handle
-            throw new Error(e);
         }
     }
 }

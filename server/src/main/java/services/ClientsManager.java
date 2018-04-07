@@ -40,6 +40,10 @@ public class ClientsManager {
     }
 
     private void handleNewClient(Socket socket) {
-        clients.add(new ClientModel(socket));
+        ClientModel client = new ClientModel(socket);
+        clients.add(client);
+        client.authenticate().subscribe(next -> {
+            // TODO: queue clients
+        });
     }
 }
