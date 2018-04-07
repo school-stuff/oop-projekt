@@ -7,7 +7,6 @@ import services.WaitingQueueService;
 
 import java.util.List;
 
-//TODO: this class should be opened after succesful registration
 
 public class WaitingQueueScene {
     private GridPane gridPane;
