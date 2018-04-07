@@ -8,7 +8,7 @@ plugins {
     id 'org.flywaydb.flyway' version '5.0.7'
 }
 
-def ENV = new HashMap<String, String>();
+def ENV = new HashMap<String, String>()
 
 def scanner = new Scanner(project.file('src/.env'))
 
@@ -26,4 +26,3 @@ flyway {
     password = ENV.get('DATABASE_PASSWORD')
     locations = ['filesystem:src/main/resources/database']
 }
-
