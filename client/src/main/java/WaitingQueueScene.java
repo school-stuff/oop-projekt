@@ -17,7 +17,7 @@ public class WaitingQueueScene {
 
 
     public WaitingQueueScene() {
-        createWaitingQueueSceneAndKeepItUpdated();
+        createAndUpdateScene();
     }
 
     public void setWaitingQueueSceneBase() {
@@ -26,16 +26,16 @@ public class WaitingQueueScene {
         Render.getInstance().showScene(waitingQueueScene);
     }
 
-    private void createWaitingQueueSceneAndKeepItUpdated(){
+    private void createAndUpdateScene(){
         setWaitingQueueSceneBase();
         WaitingQueueService.getInstance().getWaitingQueue().subscribe(data -> {
             //addAllWaiters(gridPane, data);
         });
     }
 
-    private void addAllWaiters(GridPane gridPane, List<String> usersWaiting) {
-        if (gridPane.getChildren() != null){
-            gridPane.getChildren().removeAll();
+    private void addAllWaiters(List<String> usersWaiting) {
+        if (gridPane.getChildren().size() > 1){
+            gridPane.getChildren().remove(1, usersWaiting.size() + 1); // excluding welcoming text
         }
         for (int i = 0; i < usersWaiting.size(); i++) {
             if (i % 25 == 0){gridPane.addColumn(i / USERS_IN_ROW);

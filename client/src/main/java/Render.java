@@ -15,11 +15,8 @@ public class Render extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         this.primaryStage = primaryStage;
-        // TODO: open user login scene
-        // first scene user login screen, if user has registered;
-        // that scene opens WaitingQueueScene;
-        // if game starts renders battlefield
-        new WaitingQueueScene();
+
+
         primaryStage.show();
     }
 
