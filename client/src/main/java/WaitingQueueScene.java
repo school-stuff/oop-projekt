@@ -54,7 +54,8 @@ public class WaitingQueueScene {
 
         gridPane.setHgap(5);
         gridPane.setVgap(5);
-        gridPane.setAlignment(Pos.CENTER);
+        gridPane.setAlignment(Pos.TOP_CENTER);
+        gridPane.setMinSize(800, 600);
 
         Label welcomeText = new Label("Welcome! You are waiting with users: ");
         gridPane.add(welcomeText, 0, 0);
