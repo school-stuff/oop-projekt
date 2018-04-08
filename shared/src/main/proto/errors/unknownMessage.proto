@@ -1,0 +1,10 @@
+syntax = 'proto3';
+
+package shared.errors;
+
+message MessageTypeError {
+    ErrorType message = 1;
+    enum ErrorType {
+        UnknownProperty = 0;
+    }
+}

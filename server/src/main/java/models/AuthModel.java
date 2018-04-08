@@ -2,66 +2,67 @@ package models;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import services.QueryHandler;
 import shared.user.auth.Auth;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.Socket;
 
 public class AuthModel {
     private final Socket socket;
+    private final QueryHandler queryHandler;
 
     public AuthModel(Socket socket) {
         this.socket = socket;
+        this.queryHandler = new QueryHandler(socket);
     }
 
-    public Observable authenticate() {
+    public Observable<Object> login() {
         ReplaySubject<Object> subject = ReplaySubject.create(1);
 
-        try {
-            listenAuth();
-            subject.onNext(true);
-        } catch (IOException e) {
-            subject.onError(e);
-        } finally {
-            subject.onComplete();
-        }
+        queryHandler.login().subscribe(
+            data -> {
+                handleLogin((Auth.LoginData) data);
+                subject.onNext(true);
+                subject.onComplete();
+            },
+            errors -> {
+                subject.onError(errors);
+            }
+        );
 
         return subject;
     }
 
-    private Auth.AuthResponse handleLogin(Auth.LoginData loginData) {
-        return Auth.AuthResponse.newBuilder()
-            .setMessage(Auth.AuthResponse.MessageType.Success)
-            .build();
-    }
+    public Observable<Object> register() {
+        ReplaySubject<Object> subject = ReplaySubject.create(1);
 
-    private Auth.AuthResponse handleRegister(Auth.RegisterData registerData) {
-        return Auth.AuthResponse.newBuilder()
-            .setMessage(Auth.AuthResponse.MessageType.Success)
-            .build();
-    }
-
-    private void listenAuth() throws IOException {
-        try (
-            InputStream input = socket.getInputStream();
-            OutputStream output = socket.getOutputStream()
-        ) {
-            Auth.AuthMessage message = Auth.AuthMessage.parseDelimitedFrom(input);
-
-            Auth.AuthResponse response = Auth.AuthResponse.newBuilder()
-                .setMessage(Auth.AuthResponse.MessageType.Error)
-                .build();
-
-            if (message.hasLoginData()) {
-                response = handleLogin(message.getLoginData());
-            } else if (message.hasRegisterData()) {
-                response = handleRegister(message.getRegisterData());
+        queryHandler.register().subscribe(
+            data -> {
+                handleRegister((Auth.RegisterData) data);
+                subject.onNext(true);
+                subject.onComplete();
+            },
+            errors -> {
+                subject.onError(errors);
             }
+        );
 
-            response.writeDelimitedTo(output);
+        return subject;
+    }
 
-        }
+    private void handleLogin(Auth.LoginData loginData) {
+        Auth.AuthResponse data = Auth.AuthResponse.newBuilder()
+            .setMessage(Auth.AuthResponse.MessageType.Success)
+            .build();
+
+        queryHandler.sendData("mutation", "loginSuccess", data);
+    }
+
+    private void handleRegister(Auth.RegisterData registerData) {
+        Auth.AuthResponse data = Auth.AuthResponse.newBuilder()
+            .setMessage(Auth.AuthResponse.MessageType.Success)
+            .build();
+
+        queryHandler.sendData("mutation", "registerSuccess", data);
     }
 }

@@ -12,7 +12,9 @@ public class ClientModel {
         this.socket = socket;
     }
 
-    public Observable authenticate() {
-        return new AuthModel(socket).authenticate();
+    public Observable<Object> authenticate() {
+        AuthModel authModel = new AuthModel(socket);
+
+        return authModel.login();
     }
 }
