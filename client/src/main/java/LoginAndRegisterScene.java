@@ -63,13 +63,15 @@ public class LoginAndRegisterScene {
         if (serverCommunicationsService.socketTryConnect()) {
             infoLabel.setText("Logging in...");
 
-            if (loginService.authenticateUser(usernameField.getText(), passwordField.getText())) {
-                displayWaitingQueue(); // switches login screen render scene to waiting queue
+            loginService.authenticateUser(usernameField.getText(), passwordField.getText()).subscribe(isSuccess -> {
+                if (isSuccess) {
+                    displayWaitingQueue(); // switches login screen render scene to waiting queue
 
-            } else {
-                infoLabel.setText("Unknown username or password!");
-                formSetDisable(false);
-            }
+                } else {
+                    infoLabel.setText("Unknown username or password!");
+                    formSetDisable(false);
+                }
+            });
         } else {
             infoLabel.setText("Connection to server failed!");
             formSetDisable(false);

@@ -55,7 +55,7 @@ public class AuthModel {
             .setMessage(Auth.AuthResponse.MessageType.Success)
             .build();
 
-        queryHandler.sendData("mutation", "loginSuccess", data);
+        queryHandler.sendData("update", "loginSuccess", data);
     }
 
     private void handleRegister(Auth.RegisterData registerData) {
@@ -63,6 +63,6 @@ public class AuthModel {
             .setMessage(Auth.AuthResponse.MessageType.Success)
             .build();
 
-        queryHandler.sendData("mutation", "registerSuccess", data);
+        queryHandler.sendData("update", "registerSuccess", data);
     }
 }

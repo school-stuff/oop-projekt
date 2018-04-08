@@ -58,7 +58,7 @@ public class QueryHandler {
     }
 
     public void sendData(String type, String message, AbstractMessage data) {
-        try{
+        try {
             DataOutputStream outputStream = getDataOutputStream();
             outputStream.writeUTF(type);
             outputStream.writeUTF(message);

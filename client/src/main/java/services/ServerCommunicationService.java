@@ -2,10 +2,14 @@ package services;
 
 import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
+import io.reactivex.subjects.ReplaySubject;
+import shared.user.auth.Auth;
 
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ServerCommunicationService {
 
@@ -16,6 +20,7 @@ public class ServerCommunicationService {
     private DataOutputStream dataOutput;
     private InputStream input;
     private DataInputStream dataInput;
+    private Map<String, ReplaySubject<AbstractMessage>> queryList = new HashMap<>();
 
     public static ServerCommunicationService getInstance() {
         return ourInstance;
@@ -23,9 +28,35 @@ public class ServerCommunicationService {
 
     ServerCommunicationService() {
         this.socket = new Socket();
+
+        new Thread(() -> {
+            socketTryConnect();
+            try (
+                DataInputStream inputStream = new DataInputStream(socket.getInputStream())
+            ) {
+                while (true) {
+                    String messageType = inputStream.readUTF();
+                    String messageName = inputStream.readUTF();
+
+                    switch (messageType) {
+                        case "update":
+                            handleQuery(messageName);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println(e);
+                // TODO: handle
+            }
+        }).start();
     }
 
     public boolean socketTryConnect() {
+        if (socket.isConnected()) {
+            return true;
+        }
         try {
             socket.connect(new InetSocketAddress("localhost", 8001));
         } catch (IOException e) {
@@ -34,23 +65,14 @@ public class ServerCommunicationService {
         return true;
     }
 
-    public void killSocket() throws IOException {
-        socket.close();
-    }
-
-    // server requires two helper arguments that identify the following data
-    public void sendData(String string) throws IOException {
-        getDataOutput().writeUTF(string);
-    }
-
-    // for sending the protobuf specified data
-    public void sendData(AbstractMessage data) throws IOException {
+    public void sendData(String requestType, String requestName, AbstractMessage data) throws IOException {
+        getDataOutput().writeUTF(requestType);
+        getDataOutput().writeUTF(requestName);
         data.writeDelimitedTo(getOutput());
     }
 
-    public Observable<DataInterface> getData(String requestData) {
-        // gets requested data from server
-        return null;
+    public Observable<AbstractMessage> getData(String requestData) {
+        return createQuery("query_" + requestData);
     }
 
     public InputStream getInput() {
@@ -73,6 +95,15 @@ public class ServerCommunicationService {
         return dataInput;
     }
 
+    private ReplaySubject<AbstractMessage> createQuery(String queryName) {
+        ReplaySubject<AbstractMessage> query = queryList.get(queryName);
+        if (query == null) {
+            queryList.put(queryName, ReplaySubject.create(1));
+            query = queryList.get(queryName);
+        }
+        return query;
+    }
+
     private OutputStream getOutput() {
         if (output != null) return output;
 
@@ -91,6 +122,21 @@ public class ServerCommunicationService {
         dataOutput = new DataOutputStream(getOutput());
 
         return dataOutput;
+    }
+
+    private void handleQuery(String messageName) throws IOException {
+        // TODO: make this elegant
+        switch (messageName) {
+            case "loginSuccess":
+                updateQueryData("query_" + messageName, Auth.AuthResponse.parseDelimitedFrom(getInput()));
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void updateQueryData(String mutationName, AbstractMessage data) {
+        createQuery(mutationName).onNext(data);
     }
 }
 
