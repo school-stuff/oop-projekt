@@ -7,7 +7,11 @@ import javafx.scene.layout.GridPane;
 import services.LoginService;
 import services.ServerCommunicationService;
 
+import java.io.IOException;
+
 public class LoginAndRegisterScene {
+
+    // TODO: Register elements
 
     private ServerCommunicationService serverCommunicationsService =
             ServerCommunicationService.getInstance();
@@ -41,12 +45,18 @@ public class LoginAndRegisterScene {
         gridPane.add(connectButton, 0, 3);
         gridPane.add(infoLabel, 1, 3);
 
-        connectButton.setOnAction(event -> onConnectButtonClick());
+        connectButton.setOnAction(event -> {
+            try {
+                onConnectButtonClick();
+            } catch (IOException e) {
+                formSetDisable(false);
+            }
+        });
 
         return gridPane;
     }
 
-    private void onConnectButtonClick() {
+    private void onConnectButtonClick() throws IOException {
         formSetDisable(true);
         infoLabel.setText("Establishing connection...");
 
@@ -54,7 +64,7 @@ public class LoginAndRegisterScene {
             infoLabel.setText("Logging in...");
 
             if (loginService.authenticateUser(usernameField.getText(), passwordField.getText())) {
-                displayWaitingQueue();
+                displayWaitingQueue(); // switches login screen render scene to waiting queue
 
             } else {
                 infoLabel.setText("Unknown username or password!");
