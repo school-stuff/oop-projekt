@@ -4,6 +4,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import services.WaitingQueueService;
+import shared.match.queue.Queue;
 
 import java.util.List;
 
@@ -28,11 +29,11 @@ public class WaitingQueueScene {
     private void createAndUpdateScene(){
         setWaitingQueueSceneBase();
         WaitingQueueService.getInstance().getWaitingQueue().subscribe(data -> {
-            //addAllWaiters(gridPane, data);
+            addAllWaiters(data);
         });
     }
 
-    private void addAllWaiters(List<String> usersWaiting) {
+    private void addAllWaiters(List<Queue.Person> usersWaiting) {
         if (gridPane.getChildren().size() > 1){
             gridPane.getChildren().remove(1, usersWaiting.size() + 1); // excluding welcoming text
         }
@@ -41,7 +42,7 @@ public class WaitingQueueScene {
                 columnIndex = i / USERS_IN_ROW;
                 rowIndex = 1;
             }
-            gridPane.add(new Label(usersWaiting.get(i)), columnIndex, rowIndex);
+            gridPane.add(new Label(usersWaiting.get(i).getName()), columnIndex, rowIndex);
             rowIndex++;
         }
     }

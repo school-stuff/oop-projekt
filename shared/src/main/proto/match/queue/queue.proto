@@ -1,0 +1,19 @@
+syntax = 'proto3';
+
+package shared.match.queue;
+
+message MatchQueue {
+    repeated Person persons = 1;
+    Status status = 2;
+
+    enum Status {
+        Closed = 0;
+        Waiting = 1;
+    }
+}
+
+message Person {
+    string name = 1;
+}
+
+message Filters {}

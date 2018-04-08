@@ -3,6 +3,7 @@ package services;
 import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import shared.match.queue.Queue;
 import shared.user.auth.Auth;
 
 import java.io.*;
@@ -40,7 +41,10 @@ public class ServerCommunicationService {
 
                     switch (messageType) {
                         case "update":
-                            handleQuery(messageName);
+                            handleQuery("query_", messageName);
+                            break;
+                        case "watchUpdate":
+                            handleQuery("watchquery_", messageName);
                             break;
                         default:
                             break;
@@ -71,8 +75,8 @@ public class ServerCommunicationService {
         data.writeDelimitedTo(getOutput());
     }
 
-    public Observable<AbstractMessage> getData(String requestData) {
-        return createQuery("query_" + requestData);
+    public Observable<AbstractMessage> getData(String requestName) {
+        return createQuery("query_" + requestName);
     }
 
     public InputStream getInput() {
@@ -93,6 +97,10 @@ public class ServerCommunicationService {
         dataInput = new DataInputStream(getInput());
 
         return dataInput;
+    }
+
+    public Observable<AbstractMessage> watchData(String requestName) {
+        return createQuery("watchquery_" + requestName);
     }
 
     private ReplaySubject<AbstractMessage> createQuery(String queryName) {
@@ -124,11 +132,14 @@ public class ServerCommunicationService {
         return dataOutput;
     }
 
-    private void handleQuery(String messageName) throws IOException {
+    private void handleQuery(String prefix, String messageName) throws IOException {
         // TODO: make this elegant
         switch (messageName) {
             case "loginSuccess":
-                updateQueryData("query_" + messageName, Auth.AuthResponse.parseDelimitedFrom(getInput()));
+                updateQueryData(prefix + messageName, Auth.AuthResponse.parseDelimitedFrom(getInput()));
+                break;
+            case "matchQueue":
+                updateQueryData(prefix + messageName, Queue.MatchQueue.parseDelimitedFrom(getInput()));
                 break;
             default:
                 break;

@@ -4,6 +4,7 @@ import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
 import shared.errors.UnknownMessage;
+import shared.match.queue.Queue;
 import shared.user.auth.Auth;
 
 import java.io.*;
@@ -15,6 +16,7 @@ public class QueryHandler {
     private Socket socket;
     private Map<String, ReplaySubject<AbstractMessage>> mutationResponseList = new HashMap<>();
     private Map<String, ReplaySubject<AbstractMessage>> queryList = new HashMap<>();
+    private Map<String, ReplaySubject<AbstractMessage>> watchQueryList = new HashMap<>();
     private OutputStream outputStream;
     private DataOutputStream dataOutputStream;
     private InputStream inputStream;
@@ -34,6 +36,9 @@ public class QueryHandler {
                         case "query":
                             handleQuery(messageName);
                             break;
+                        case "watchQuery":
+                            handleWatchQuery(messageName);
+                            break;
                         case "mutation":
                             handleMutation(messageName);
                             break;
@@ -47,6 +52,10 @@ public class QueryHandler {
                 // TODO: handle
             }
         }).start();
+    }
+
+    public Observable<AbstractMessage> getMatchQueue() {
+        return createWatchQuery("matchQueue");
     }
 
     public Observable<AbstractMessage> login() {
@@ -68,6 +77,10 @@ public class QueryHandler {
         }
     }
 
+    public void updateMatchQueue(AbstractMessage queue) {
+        updateWatchQueryData("matchQueue", queue);
+    }
+
     private ReplaySubject<AbstractMessage> createMutation(String mutationName) {
         ReplaySubject<AbstractMessage> mutation = mutationResponseList.get(mutationName);
         if (mutation == null) {
@@ -85,6 +98,20 @@ public class QueryHandler {
         }
         return query;
     }
+
+    private ReplaySubject<AbstractMessage> createWatchQuery(String queryName) {
+        ReplaySubject<AbstractMessage> query = watchQueryList.get(queryName);
+        if (query == null) {
+            queryList.put(queryName, ReplaySubject.create(1));
+            query = queryList.get(queryName);
+
+            query.subscribe(data -> {
+                sendData("watchUpdate", queryName, data);
+            });
+        }
+        return query;
+    }
+
 
     private DataOutputStream getDataOutputStream() {
         if (dataOutputStream != null) return dataOutputStream;
@@ -142,6 +169,18 @@ public class QueryHandler {
         }
     }
 
+    private void handleWatchQuery(String messageName) throws IOException {
+        // TODO: make this elegant
+        switch (messageName) {
+            case "matchQueue":
+                updateWatchQueryData(messageName, Queue.Filters.parseDelimitedFrom(getInputStream()));
+                break;
+            default:
+                handleUnknownMessage();
+                break;
+        }
+    }
+
     private void handleUnknownMessage() {
         // TODO: tell if message type or query name was invalid
         UnknownMessage.MessageTypeError errorMessage = UnknownMessage.MessageTypeError.newBuilder()
@@ -155,6 +194,11 @@ public class QueryHandler {
     }
 
     private void updateQueryData(String queryName, AbstractMessage data) {
+        // TODO: make it, that once queried, this closes and removes self
         createQuery(queryName).onNext(data);
+    }
+
+    private void updateWatchQueryData(String queryName, AbstractMessage data) {
+        createWatchQuery(queryName).onNext(data);
     }
 }
