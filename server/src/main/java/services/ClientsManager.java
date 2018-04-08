@@ -31,8 +31,7 @@ public class ClientsManager {
                     handleNewClient(accept);
                 }
             } catch (IOException e) {
-                // TODO: error handling e.g. s
-                // awaitConnections();
+                // TODO: error handling
                 Thread.currentThread().interrupt();
                 throw new Error(e);
             }
@@ -43,6 +42,7 @@ public class ClientsManager {
         ClientModel client = new ClientModel(socket);
         clients.add(client);
         client.authenticate().subscribe(next -> {
+            System.out.println("client auth success");
             // TODO: queue clients
         });
     }

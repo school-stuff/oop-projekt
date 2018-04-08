@@ -2,13 +2,6 @@ syntax = 'proto3';
 
 package shared.user.auth;
 
-message AuthMessage {
-    oneof authMessage {
-        LoginData loginData = 2;
-        RegisterData registerData = 3;
-    }
-}
-
 message LoginData {
     string email = 1;
     string password = 2;

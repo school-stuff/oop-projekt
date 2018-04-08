@@ -3,25 +3,26 @@ package services;
 import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
 public class ServerCommunicationService {
 
-    private final Socket socket;
+    private Socket socket;
 
     private static ServerCommunicationService ourInstance = new ServerCommunicationService();
+    private OutputStream output;
+    private DataOutputStream dataOutput;
+    private InputStream input;
+    private DataInputStream dataInput;
 
     public static ServerCommunicationService getInstance() {
         return ourInstance;
     }
 
     ServerCommunicationService() {
-        socket = new Socket();
+        this.socket = new Socket();
     }
 
     public boolean socketTryConnect() {
@@ -39,27 +40,57 @@ public class ServerCommunicationService {
 
     // server requires two helper arguments that identify the following data
     public void sendData(String string) throws IOException {
-        try (OutputStream output = socket.getOutputStream();
-             DataOutputStream dataOutput = new DataOutputStream(output)) {
-            dataOutput.writeUTF(string);
-        }
+        getDataOutput().writeUTF(string);
     }
 
     // for sending the protobuf specified data
     public void sendData(AbstractMessage data) throws IOException {
-        try (OutputStream output = socket.getOutputStream()) {
-            data.writeDelimitedTo(output);
-        }
+        data.writeDelimitedTo(getOutput());
     }
-
-    public InputStream getInput() throws IOException {
-        return socket.getInputStream();
-    }
-
 
     public Observable<DataInterface> getData(String requestData) {
         // gets requested data from server
         return null;
+    }
+
+    public InputStream getInput() {
+        if (input != null) return input;
+
+        try {
+            input = socket.getInputStream();
+        } catch (IOException e) {
+            // TODO: handle
+        }
+
+        return input;
+    }
+
+    public DataInputStream getDataInput() {
+        if (dataInput != null) return dataInput;
+
+        dataInput = new DataInputStream(getInput());
+
+        return dataInput;
+    }
+
+    private OutputStream getOutput() {
+        if (output != null) return output;
+
+        try {
+            output = socket.getOutputStream();
+        } catch (IOException e) {
+            // TODO: handle
+        }
+
+        return output;
+    }
+
+    private DataOutputStream getDataOutput() {
+        if (dataOutput != null) return dataOutput;
+
+        dataOutput = new DataOutputStream(getOutput());
+
+        return dataOutput;
     }
 }
 
