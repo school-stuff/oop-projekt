@@ -1,10 +1,10 @@
 package services;
 
+import io.reactivex.Observable;
+import io.reactivex.subjects.ReplaySubject;
 import shared.user.auth.Auth;
 
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 
 public class LoginService {
@@ -18,31 +18,27 @@ public class LoginService {
 
     ServerCommunicationService server = ServerCommunicationService.getInstance();
 
-    public boolean authenticateUser(String username, String password) throws IOException {
+    public Observable<Boolean> authenticateUser(String username, String password) throws IOException {
+        ReplaySubject<Boolean> subject = ReplaySubject.create();
+
         Auth.LoginData loginData =
             Auth.LoginData.newBuilder()
                 .setEmail(username)
                 .setPassword(password)
                 .build();
 
-        server.sendData("mutation");
-        server.sendData("login");
-        server.sendData(loginData);
+        server.sendData("mutation", "login", loginData);
+        server.getData("loginSuccess").subscribe(data -> {
+            Auth.AuthResponse response = (Auth.AuthResponse) data;
 
-        InputStream input = server.getInput();
-        DataInputStream dataInputStream = server.getDataInput();
-        Auth.AuthResponse response;
+            if (response.getMessage() == Auth.AuthResponse.MessageType.Error) {
+                subject.onNext(false);
+            } else if (response.getMessage() == Auth.AuthResponse.MessageType.Success) {
+                subject.onNext(true);
+            }
+        });
 
-        String s1 = dataInputStream.readUTF();
-        String s2 = dataInputStream.readUTF();
-        response = Auth.AuthResponse.parseDelimitedFrom(input);
-
-        if (response.getMessage() == Auth.AuthResponse.MessageType.Error) {
-            return false;
-        } else if (response.getMessage() == Auth.AuthResponse.MessageType.Success) {
-            return true;
-        }
-        return false;
+        return subject;
     }
 
     // TODO: Register method

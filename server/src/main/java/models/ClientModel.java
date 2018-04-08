@@ -2,6 +2,7 @@ package models;
 
 
 import io.reactivex.Observable;
+import shared.user.auth.Auth;
 
 import java.net.Socket;
 
@@ -12,7 +13,7 @@ public class ClientModel {
         this.socket = socket;
     }
 
-    public Observable<Object> authenticate() {
+    public Observable<Auth.LoginData> authenticate() {
         AuthModel authModel = new AuthModel(socket);
 
         return authModel.login();

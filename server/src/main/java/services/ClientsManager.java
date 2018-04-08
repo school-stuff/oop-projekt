@@ -1,12 +1,13 @@
 package services;
 
 import models.ClientModel;
+import shared.match.queue.Queue;
+import shared.user.auth.Auth;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class ClientsManager {
     private static ClientsManager ourInstance = new ClientsManager();
@@ -15,7 +16,7 @@ public class ClientsManager {
         return ourInstance;
     }
 
-    private final List<ClientModel> clients = new ArrayList<>();
+    private final Map<Auth.LoginData, QueryHandler> clients = new HashMap<>();
 
     private ClientsManager() {
         awaitConnections();
@@ -40,10 +41,25 @@ public class ClientsManager {
 
     private void handleNewClient(Socket socket) {
         ClientModel client = new ClientModel(socket);
-        clients.add(client);
-        client.authenticate().subscribe(next -> {
-            System.out.println("client auth success");
-            // TODO: queue clients
+
+        client.authenticate().subscribe(user -> {
+            clients.put(user, new QueryHandler(socket));
+            updateClientsQueue();
         });
+    }
+
+    private void updateClientsQueue() {
+        for (QueryHandler queryHandler : clients.values()) {
+            ArrayList<Queue.Person> clientNames = new ArrayList<>();
+
+            Set<Auth.LoginData> loginData = clients.keySet();
+            for (Auth.LoginData user : loginData) {
+                clientNames.add(
+                    Queue.Person.newBuilder().setName(user.getEmail()).build()
+                );
+            }
+            Queue.MatchQueue queue = Queue.MatchQueue.newBuilder().addAllPersons(clientNames).build();
+            queryHandler.updateMatchQueue(queue);
+        }
     }
 }

@@ -16,13 +16,14 @@ public class AuthModel {
         this.queryHandler = new QueryHandler(socket);
     }
 
-    public Observable<Object> login() {
-        ReplaySubject<Object> subject = ReplaySubject.create(1);
+    public Observable<Auth.LoginData> login() {
+        ReplaySubject<Auth.LoginData> subject = ReplaySubject.create(1);
 
         queryHandler.login().subscribe(
             data -> {
-                handleLogin((Auth.LoginData) data);
-                subject.onNext(true);
+                Auth.LoginData result = (Auth.LoginData) data;
+                handleLogin(result);
+                subject.onNext(result);
                 subject.onComplete();
             },
             errors -> {
@@ -55,7 +56,7 @@ public class AuthModel {
             .setMessage(Auth.AuthResponse.MessageType.Success)
             .build();
 
-        queryHandler.sendData("mutation", "loginSuccess", data);
+        queryHandler.sendData("update", "loginSuccess", data);
     }
 
     private void handleRegister(Auth.RegisterData registerData) {
@@ -63,6 +64,6 @@ public class AuthModel {
             .setMessage(Auth.AuthResponse.MessageType.Success)
             .build();
 
-        queryHandler.sendData("mutation", "registerSuccess", data);
+        queryHandler.sendData("update", "registerSuccess", data);
     }
 }
