@@ -1,5 +1,7 @@
+import javafx.application.Application;
+
 public class Client {
     public static void main(String[] args) {
-        // Client start
+        Application.launch(Render.class, args);
     }
 }

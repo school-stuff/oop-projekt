@@ -2,7 +2,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.IOException;
 
 public class Render extends Application {
     private static Render ourInstance = new Render();
@@ -13,10 +12,11 @@ public class Render extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) throws IOException {
+    public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
+        new LoginAndRegisterScene();
 
-
+        primaryStage.setResizable(false);
         primaryStage.show();
     }
 
