@@ -12,6 +12,7 @@ public class OpenedImages {
     private final Image rockImage;
     private final Image characterImage;
     private final Image waterImage;
+    private final Image wallImage;
 
 
     public OpenedImages() throws IOException {
@@ -19,6 +20,7 @@ public class OpenedImages {
         this.rockImage = getImageFromFile("client/src/main/resources/images/stone.png");
         this.characterImage = getImageFromFile("client/src/main/resources/images/character.png");
         this.waterImage = getImageFromFile(("client/src/main/resources/images/water.png"));
+        this.wallImage = getImageFromFile(("client/src/main/resources/images/wall.png"));
     }
 
     public Image getCharacterImage() {
@@ -35,6 +37,10 @@ public class OpenedImages {
 
     public Image getWaterImage() {
         return waterImage;
+    }
+
+    public Image getWallImage() {
+        return wallImage;
     }
 
     private Image getImageFromFile(String file) throws IOException {

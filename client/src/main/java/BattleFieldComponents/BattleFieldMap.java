@@ -13,8 +13,10 @@ public class BattleFieldMap {
                 for (int j = 0; j < 50; j++) {
                     if (j == 0 || j == 49) {
                         battleFieldArray[i][j] = -1;
-                    } else if (j == 3){
+                    } else if (j > 3 && j < 5 && i > 6 && i < 12){
                         battleFieldArray[i][j] = 2;
+                    } else if (j == 7 && i > 4) {
+                        battleFieldArray[i][j] = 3;
                     } else {
                         battleFieldArray[i][j] = 0;
                     }

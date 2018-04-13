@@ -19,7 +19,6 @@ public class BattleFieldSquare {
         this.locationX = locationX;
         this.locationY = locationY;
         pictureLayers.add(BattleFieldScene.getOpenedImages().getGrassImage());
-
         //TODO: correct path
     }
 

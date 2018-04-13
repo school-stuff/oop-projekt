@@ -1,9 +1,10 @@
 package BattleFieldComponents;
 
 public enum SquareTypes {
-    Grass(0),
     Rock (-1),
-    Water (2);
+    Grass (0),
+    Water (2),
+    Wall (3);
 
     private int num;
     SquareTypes(int i) {
