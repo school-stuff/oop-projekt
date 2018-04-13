@@ -24,10 +24,9 @@ public class BattleFieldScene {
     }
 
     private void creatingBattleField(GridPane gridPane) {
-        Observable<String> ourObservable = GameService.getInstance().getCharacterLocation();
+        Observable<int[]> ourObservable = GameService.getInstance().getCharacterLocation();
         ourObservable.subscribe(data -> {
-            String[] location = data.split(" ");
-            getVisiblePart(gridPane, Integer.parseInt(location[0]), Integer.parseInt(location[1]));
+            getVisiblePart(gridPane, data[0], data[1]);
             Render.getInstance().showScene(new Scene(gridPane, Color.BLACK));
         });
     }
