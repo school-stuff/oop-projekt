@@ -59,15 +59,15 @@ public class BattleFieldScene {
     }
 
     private BattleFieldSquare createSquare(int type, int x, int y) throws IOException {
-        if (type == SquareTypes.Grass.getNum()) {
+        if (type == SquareTypes.GRASS.getNum()) {
             return new BattleFieldSquare(x, y);
         }
-        if (type == SquareTypes.Rock.getNum()) {
+        if (type == SquareTypes.ROCK.getNum()) {
             return new Rock(x, y);
         }
-        if (type == SquareTypes.Water.getNum()) {
+        if (type == SquareTypes.WATER.getNum()) {
             return new Water(x, y);
-        } if (type == SquareTypes.Wall.getNum()) {
+        } if (type == SquareTypes.WALL.getNum()) {
             return new Wall(x, y);
         }
 
