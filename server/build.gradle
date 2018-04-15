@@ -10,6 +10,8 @@ plugins {
 
 dependencies {
     compile 'io.reactivex.rxjava2:rxjava:2.1.12'
+    compile 'org.flywaydb:flyway-core:5.0.7'
+    compile 'mysql:mysql-connector-java:5.1.37'
 }
 
 def ENV = new HashMap<String, String>()
@@ -28,5 +30,5 @@ flyway {
     url = ENV.get('DATABASE_URL')
     user = ENV.get('DATABASE_USER')
     password = ENV.get('DATABASE_PASSWORD')
-    locations = ['filesystem:src/main/resources/database']
+    locations = ['filesystem:src/main/resources/db']
 }

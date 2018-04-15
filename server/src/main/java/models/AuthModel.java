@@ -1,19 +1,27 @@
 package models;
 
+import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import services.DatabaseService;
 import services.QueryHandler;
 import shared.user.auth.Auth;
 
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class AuthModel {
     private final Socket socket;
     private final QueryHandler queryHandler;
+    private final DatabaseService databaseService;
 
     public AuthModel(Socket socket) {
         this.socket = socket;
         this.queryHandler = new QueryHandler(socket);
+        this.databaseService = DatabaseService.getInstance();
     }
 
     public Observable<Auth.LoginData> login() {
@@ -52,18 +60,58 @@ public class AuthModel {
     }
 
     private void handleLogin(Auth.LoginData loginData) {
-        Auth.AuthResponse data = Auth.AuthResponse.newBuilder()
-            .setMessage(Auth.AuthResponse.MessageType.Success)
-            .build();
+        Connection connection = databaseService.getConnection();
+        String username = loginData.getEmail();
+        String password = loginData.getPassword();
+        AbstractMessage data = null;
 
-        queryHandler.sendData("update", "loginSuccess", data);
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT password FROM user WHERE username = ?");
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            resultSet.next();
+
+            if (password.equals(resultSet.getString("password"))) {
+                data = Auth.AuthResponse.newBuilder()
+                        .setMessage(Auth.AuthResponse.MessageType.Success)
+                        .build();
+            } else {
+                data = Auth.AuthResponse.newBuilder()
+                        .setMessage(Auth.AuthResponse.MessageType.Error)
+                        .build();
+            }
+        } catch (SQLException e) {
+            data = Auth.AuthResponse.newBuilder()
+                    .setMessage(Auth.AuthResponse.MessageType.Error)
+                    .build();
+        } finally {
+            queryHandler.sendData("update", "loginSuccess", data);
+        }
+
+
     }
 
     private void handleRegister(Auth.RegisterData registerData) {
-        Auth.AuthResponse data = Auth.AuthResponse.newBuilder()
-            .setMessage(Auth.AuthResponse.MessageType.Success)
-            .build();
+        Connection connection = databaseService.getConnection();
+        String username = registerData.getEmail();
+        String password = registerData.getPassword();
+        AbstractMessage data = null;
 
-        queryHandler.sendData("update", "registerSuccess", data);
+        try {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO user(username, password) VALUES (?, ?)");
+            statement.setString(1, username);
+            statement.setString(2, password);
+            statement.executeUpdate();
+            data = Auth.AuthResponse.newBuilder()
+                    .setMessage(Auth.AuthResponse.MessageType.Success)
+                    .build();
+        } catch (SQLException e) {
+            data = Auth.AuthResponse.newBuilder()
+                    .setMessage(Auth.AuthResponse.MessageType.Error)
+                    .build();
+            return;
+        } finally {
+            queryHandler.sendData("update", "registerSuccess", data);
+        }
     }
 }

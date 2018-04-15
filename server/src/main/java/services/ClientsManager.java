@@ -1,9 +1,9 @@
 package services;
 
 import models.ClientModel;
+import org.flywaydb.core.Flyway;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -20,6 +20,7 @@ public class ClientsManager {
 
     private ClientsManager() {
         awaitConnections();
+        new Flyway().migrate();
     }
 
     private void awaitConnections() {

@@ -138,6 +138,9 @@ public class ServerCommunicationService {
             case "loginSuccess":
                 updateQueryData(prefix + messageName, Auth.AuthResponse.parseDelimitedFrom(getInput()));
                 break;
+            case "registerSuccess":
+                updateQueryData(prefix + messageName, Auth.AuthResponse.parseDelimitedFrom(getInput()));
+                break;
             case "matchQueue":
                 updateQueryData(prefix + messageName, Queue.MatchQueue.parseDelimitedFrom(getInput()));
                 break;
