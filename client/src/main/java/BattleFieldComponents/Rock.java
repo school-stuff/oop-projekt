@@ -4,8 +4,8 @@ import Scenes.BattleFieldScene;
 
 public class Rock extends BattleFieldSquare {
 
-    public Rock(int locationX, int getLocationY) {
-        super(locationX, getLocationY);
+    public Rock() {
+        super();
         addLayer(BattleFieldScene.getOpenedImages().getRockImage());
     }
 }

@@ -5,8 +5,8 @@ import Scenes.BattleFieldScene;
 import java.io.IOException;
 
 public class Water extends BattleFieldSquare{
-    public Water(int locationX, int getLocationY) {
-        super(locationX, getLocationY);
+    public Water() {
+        super();
         addLayer(BattleFieldScene.getOpenedImages().getWaterImage());
     }
 }

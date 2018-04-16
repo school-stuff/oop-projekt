@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class OpenedImages {
-    private static Image grassImage;
+    private final Image grassImage;
     private final Image rockImage;
     private final Image characterImage;
     private final Image waterImage;

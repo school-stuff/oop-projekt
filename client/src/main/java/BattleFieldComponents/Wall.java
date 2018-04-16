@@ -3,8 +3,8 @@ package BattleFieldComponents;
 import Scenes.BattleFieldScene;
 
 public class Wall extends BattleFieldSquare{
-    public Wall(int locationX, int locationY) {
-        super(locationX, locationY);
+    public Wall() {
+        super();
         addLayer(BattleFieldScene.getOpenedImages().getWallImage());
     }
 }

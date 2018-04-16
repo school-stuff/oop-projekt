@@ -20,6 +20,10 @@ public class GameService {
     }
 
     public Observable<int[]> getCharacterLocation() {
+        int[] a = new int[2];
+        a[0] = 1;
+        a[1] = 1;
+        replaySubject.onNext(a);
         return replaySubject;
     }
 
