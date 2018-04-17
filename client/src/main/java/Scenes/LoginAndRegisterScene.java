@@ -18,7 +18,7 @@ public class LoginAndRegisterScene {
             ServerCommunicationService.getInstance();
     private LoginService loginService = LoginService.getInstance();
 
-    private TextField usernameField = new TextField();
+    private TextField emailField = new TextField();
     private PasswordField passwordField = new PasswordField();
     private Label infoLabel = new Label();
     private Button connectButton = new Button("Connect");
@@ -39,9 +39,9 @@ public class LoginAndRegisterScene {
         gridPane.setHgap(10);
         gridPane.setVgap(10);
 
-        gridPane.add(usernameField, 1, 1);
+        gridPane.add(emailField, 1, 1);
         gridPane.add(passwordField, 1, 2);
-        gridPane.add(new Label("Username:"), 0, 1);
+        gridPane.add(new Label("email:"), 0, 1);
         gridPane.add(new Label("Password:"), 0, 2);
         gridPane.add(connectButton, 0, 3);
         gridPane.add(infoLabel, 1, 3);
@@ -64,12 +64,12 @@ public class LoginAndRegisterScene {
         if (serverCommunicationsService.socketTryConnect()) {
             infoLabel.setText("Logging in...");
 
-            loginService.authenticateUser(usernameField.getText(), passwordField.getText()).subscribe(isSuccess -> {
+            loginService.authenticateUser(emailField.getText(), passwordField.getText()).subscribe(isSuccess -> {
                 if (isSuccess) {
                     displayWaitingQueue(); // switches login screen render scene to waiting queue
 
                 } else {
-                    infoLabel.setText("Unknown username or password!");
+                    infoLabel.setText("Unknown email or password!");
                     formSetDisable(false);
                 }
             });
@@ -80,7 +80,7 @@ public class LoginAndRegisterScene {
     }
 
     private void formSetDisable(boolean value) {
-        usernameField.setDisable(value);
+        emailField.setDisable(value);
         passwordField.setDisable(value);
         connectButton.setDisable(value);
     }
