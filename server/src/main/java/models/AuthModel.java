@@ -61,13 +61,13 @@ public class AuthModel {
 
     private void handleLogin(Auth.LoginData loginData) {
         Connection connection = databaseService.getConnection();
-        String username = loginData.getEmail();
+        String email = loginData.getEmail();
         String password = loginData.getPassword();
         AbstractMessage data = null;
 
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT password FROM user WHERE username = ?");
-            statement.setString(1, username);
+            PreparedStatement statement = connection.prepareStatement("SELECT password FROM user WHERE email = ?");
+            statement.setString(1, email);
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
 
@@ -93,13 +93,13 @@ public class AuthModel {
 
     private void handleRegister(Auth.RegisterData registerData) {
         Connection connection = databaseService.getConnection();
-        String username = registerData.getEmail();
+        String email = registerData.getEmail();
         String password = registerData.getPassword();
         AbstractMessage data = null;
 
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO user(username, password) VALUES (?, ?)");
-            statement.setString(1, username);
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO user(email, password) VALUES (?, ?)");
+            statement.setString(1, email);
             statement.setString(2, password);
             statement.executeUpdate();
             data = Auth.AuthResponse.newBuilder()

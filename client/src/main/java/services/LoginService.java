@@ -18,12 +18,12 @@ public class LoginService {
 
     ServerCommunicationService server = ServerCommunicationService.getInstance();
 
-    public Observable<Boolean> authenticateUser(String username, String password) throws IOException {
+    public Observable<Boolean> authenticateUser(String email, String password) throws IOException {
         ReplaySubject<Boolean> subject = ReplaySubject.create();
 
         Auth.LoginData loginData =
             Auth.LoginData.newBuilder()
-                .setEmail(username)
+                .setEmail(email)
                 .setPassword(password)
                 .build();
 

@@ -20,7 +20,6 @@ public class ClientsManager {
 
     private ClientsManager() {
         awaitConnections();
-        new Flyway().migrate();
     }
 
     private void awaitConnections() {
