@@ -30,5 +30,4 @@ flyway {
     url = ENV.get('DATABASE_URL')
     user = ENV.get('DATABASE_USER')
     password = ENV.get('DATABASE_PASSWORD')
-    locations = ['filesystem:src/main/resources/db']
 }
