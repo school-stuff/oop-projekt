@@ -1,3 +1,4 @@
+package Scenes;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;

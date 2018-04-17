@@ -1,0 +1,19 @@
+syntax = 'proto3';
+
+package shared.match.location;
+
+message LocationData {
+    UserLocation userLocation = 1;
+    repeated MapData mapData = 2;
+}
+
+message UserLocation {
+    int32 x = 1;
+    int32 y = 2;
+}
+
+message MapData {
+    repeated int32 location = 1;
+}
+
+message Filters {}
