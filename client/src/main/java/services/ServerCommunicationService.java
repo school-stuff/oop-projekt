@@ -1,8 +1,10 @@
 package services;
 
 import com.google.protobuf.AbstractMessage;
+import com.google.protobuf.DescriptorProtos;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import shared.match.location.Location;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
 
@@ -140,6 +142,9 @@ public class ServerCommunicationService {
                 break;
             case "matchQueue":
                 updateQueryData(prefix + messageName, Queue.MatchQueue.parseDelimitedFrom(getInput()));
+                break;
+            case "matchLocation":
+                updateQueryData(prefix + messageName, Location.LocationData.parseDelimitedFrom(getInput()));
                 break;
             default:
                 break;
