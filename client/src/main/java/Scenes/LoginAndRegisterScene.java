@@ -1,5 +1,6 @@
 package Scenes;
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -28,9 +29,17 @@ public class LoginAndRegisterScene {
     }
 
     public void setLoginAndRegisterSceneBase() {
+        formSetDisable(true);
+        infoLabel.setText("Connecting to server...");
         GridPane gridPane = createGridPane();
         Scene loginAndRegisterScene = new Scene(gridPane);
         Render.getInstance().showScene(loginAndRegisterScene);
+        serverCommunicationsService.isConnected.subscribe(isConnected -> {
+            if (isConnected) {
+                Platform.runLater(() -> infoLabel.setText("")); // Solution to a common JavaFX threading issue
+                formSetDisable(false);
+            }
+        });
     }
 
     private GridPane createGridPane() {
