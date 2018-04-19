@@ -5,15 +5,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BattleFieldSquare {
-    private static final int SQUARE_SIZE = 50;
+    private static final double SQUARE_SIZE = 555/11;
     private List<Image> pictureLayers = new ArrayList<>();
 
-    public BattleFieldSquare() {
-        pictureLayers.add(BattleFieldScene.getOpenedImages().getGrassImage());
+    public BattleFieldSquare()  {
+        pictureLayers.add(ImageOpener.getGrassImage());
     }
 
     public void addImageToGridPane(GridPane gridPane, int locationX, int locationY) {
@@ -32,4 +33,6 @@ public class BattleFieldSquare {
     public boolean canGoTo(){
         return true;
     }
+
+
 }

@@ -4,7 +4,6 @@ import BattleFieldComponents.*;
 import io.reactivex.Observable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -14,31 +13,26 @@ import java.io.IOException;
 
 public class BattleFieldScene {
     private static int[][] map;
-    private static OpenedImages images;
     private static final int SQUARES_IN_ROW = 11;
-    private static final int NUMBER_OF_COLUMNS = 11;
-    private final Player player = new Player();
+    private static final int SQUARES_IN_COLUMNS = 11;
+
+    private DisplayLocation userDisplayLocation;
 
     public BattleFieldScene() throws IOException {
-        map = new BattleFieldMap().createMap();
-        images = new OpenedImages();
+        map = new BattleFieldMap().getBattleFieldArray();
         GridPane gridPane = createGridPane();
         Scene battleFieldScene = new Scene(gridPane, Color.BLACK);
         Render.getInstance().showScene(battleFieldScene);
-        createObserver(gridPane);
+        //createObserver(gridPane);
+        setVisiblePart(gridPane, new DisplayLocation(5, 5));
     }
 
     private void createObserver (GridPane gridPane) {
        Observable<int[]> ourObservable = GameService.getInstance().getCharacterLocation();
         ourObservable.subscribe(data -> {
-            player.setX(data[0]);
-            player.setY(data[1]);
-            setVisiblePart(gridPane, data[0], data[1]);
+            userDisplayLocation = new DisplayLocation(data[0], data[1]);
+            setVisiblePart(gridPane, userDisplayLocation);
         });
-    }
-
-    public static OpenedImages getOpenedImages() {
-        return images;
     }
 
     private GridPane createGridPane() {
@@ -50,19 +44,22 @@ public class BattleFieldScene {
         return gridPane;
     }
 
-    private void setVisiblePart(GridPane gridPane, int userX, int userY) {
+    private void setVisiblePart(GridPane gridPane, DisplayLocation userDisplayLocation) {
         gridPane.getChildren().removeAll();
         BattleFieldSquare square;
         for (int i = 0; i < SQUARES_IN_ROW; i++) {
-            for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
-                if (player.userInTheMiddle(userX, userY)) {
-                   square = SquareTypes.getSquare(map[userX - (NUMBER_OF_COLUMNS / 2) + j][userY - (SQUARES_IN_ROW / 2) + i]);
-                } else {
-                    square = SquareTypes.getSquare(map[j][i]);
-                }
+            for (int j = 0; j < SQUARES_IN_COLUMNS; j++) {
+                square = SquareTypes.getSquare(map[userDisplayLocation.upperRowIndex() + j][userDisplayLocation.leftColumnIndex() + i]);
                 square.addImageToGridPane(gridPane, j, i);
             }
         }
-        player.addCharacterLayer(gridPane);
+        addCharacterLayer(gridPane, userDisplayLocation);
+    }
+
+    public void addCharacterLayer(GridPane gridPane, DisplayLocation userDisplayLocation) {
+        ImageView imageView = new ImageView(ImageOpener.getCharacterImage());
+        imageView.setFitWidth(50);
+        imageView.setFitHeight(50);
+        gridPane.add(imageView, userDisplayLocation.userY(), userDisplayLocation.userX());
     }
 }

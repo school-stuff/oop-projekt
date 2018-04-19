@@ -1,11 +1,16 @@
 package BattleFieldComponents;
 
-import Scenes.BattleFieldScene;
+import java.io.IOException;
 
 public class Rock extends BattleFieldSquare {
 
-    public Rock() {
+    public Rock()  {
         super();
-        addLayer(BattleFieldScene.getOpenedImages().getRockImage());
+        addLayer(ImageOpener.getRockImage());
+    }
+
+    @Override
+    public boolean canGoTo() {
+        return false;
     }
 }

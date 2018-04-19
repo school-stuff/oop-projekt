@@ -1,9 +1,21 @@
 package BattleFieldComponents;
 
 public class BattleFieldMap {
-    private static int[][] battleFieldArray = new int[50][50];
+    private final static int[][] battleFieldArray = new int[50][50];
 
-    public int[][] createMap(){
+    public BattleFieldMap() {
+        createMap();
+    }
+
+    public int[][] getBattleFieldArray() {
+        return battleFieldArray;
+    }
+
+    public static boolean canGoToSquare(int x, int y) {
+        return SquareTypes.getSquare(battleFieldArray[y][x]).canGoTo();
+    }
+
+    private void createMap(){
         for (int i = 0; i < 50; i++) {
             if (i == 0 || i == 49){
                 for (int j = 0; j < 50; j++) {
@@ -23,6 +35,5 @@ public class BattleFieldMap {
                 }
             }
         }
-        return battleFieldArray;
     }
 }
