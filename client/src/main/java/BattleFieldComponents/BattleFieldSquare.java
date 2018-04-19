@@ -28,4 +28,8 @@ public class BattleFieldSquare {
     public void addLayer(Image image) {
         pictureLayers.add(image);
     }
+
+    public boolean canGoTo(){
+        return true;
+    }
 }

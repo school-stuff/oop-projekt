@@ -1,9 +1,6 @@
 package Scenes;
 
-import BattleFieldComponents.BattleFieldMap;
-import BattleFieldComponents.BattleFieldSquare;
-import BattleFieldComponents.OpenedImages;
-import BattleFieldComponents.SquareTypes;
+import BattleFieldComponents.*;
 import io.reactivex.Observable;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -16,31 +13,27 @@ import services.GameService;
 import java.io.IOException;
 
 public class BattleFieldScene {
-    private final int[][] map;
-    private static int SQUARES_IN_ROW = 11;
-    private static int NUMBER_OF_COLUMNS = 11;
+    private static int[][] map;
     private static OpenedImages images;
-    private boolean sceneOpened = false;
+    private static final int SQUARES_IN_ROW = 11;
+    private static final int NUMBER_OF_COLUMNS = 11;
+    private final Player player = new Player();
 
-    public BattleFieldScene() throws IOException, InterruptedException {
+    public BattleFieldScene() throws IOException {
         map = new BattleFieldMap().createMap();
         images = new OpenedImages();
         GridPane gridPane = createGridPane();
-        creatingBattleField(gridPane);
+        Scene battleFieldScene = new Scene(gridPane, Color.BLACK);
+        Render.getInstance().showScene(battleFieldScene);
+        createObserver(gridPane);
     }
 
-    private void creatingBattleField(GridPane gridPane) throws IOException{
-
+    private void createObserver (GridPane gridPane) {
        Observable<int[]> ourObservable = GameService.getInstance().getCharacterLocation();
         ourObservable.subscribe(data -> {
-            if (!sceneOpened) {
-                Scene battleFieldScene = new Scene(gridPane);
-                battleFieldScene.setFill(Color.BLACK);
-                getVisiblePart(gridPane, data[0], data[1]);
-                Render.getInstance().showScene(battleFieldScene);
-                sceneOpened = true;
-            }
-            getVisiblePart(gridPane, data[0], data[1]);
+            player.setX(data[0]);
+            player.setY(data[1]);
+            setVisiblePart(gridPane, data[0], data[1]);
         });
     }
 
@@ -57,48 +50,19 @@ public class BattleFieldScene {
         return gridPane;
     }
 
-    private void getVisiblePart(GridPane gridPane, int userX, int userY) {
+    private void setVisiblePart(GridPane gridPane, int userX, int userY) {
         gridPane.getChildren().removeAll();
         BattleFieldSquare square;
         for (int i = 0; i < SQUARES_IN_ROW; i++) {
             for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
-                if (userInTheMiddle(userX, userY)) {
-                   square = createSquare(map[userX - (NUMBER_OF_COLUMNS / 2) + j][userY - (SQUARES_IN_ROW / 2) + i]);
+                if (player.userInTheMiddle(userX, userY)) {
+                   square = SquareTypes.getSquare(map[userX - (NUMBER_OF_COLUMNS / 2) + j][userY - (SQUARES_IN_ROW / 2) + i]);
                 } else {
-                    square = createSquare(map[j][i]);
+                    square = SquareTypes.getSquare(map[j][i]);
                 }
                 square.addImageToGridPane(gridPane, j, i);
             }
         }
-        addExtraLayer(images.getCharacterImage(),gridPane, userXVisible(userX), userYVisible(userY));
-    }
-
-    private BattleFieldSquare createSquare(int type) {
-        return SquareTypes.getSquare(type);
-    }
-
-    private void addExtraLayer(Image layerImage, GridPane gridPane, int x, int y){
-        ImageView imageView = new ImageView(layerImage);
-        imageView.setFitWidth(50);
-        imageView.setFitHeight(50);
-        gridPane.add(imageView, y, x);
-    }
-
-    private boolean userInTheMiddle(int userX, int userY){
-        return userY >= SQUARES_IN_ROW / 2 && userX >= NUMBER_OF_COLUMNS / 2;
-    }
-
-    private int userXVisible(int userX){
-        if (userX < NUMBER_OF_COLUMNS / 2) {
-            return userX;
-        }
-        return NUMBER_OF_COLUMNS / 2;
-    }
-
-    private int userYVisible(int userY) {
-        if (userY < SQUARES_IN_ROW / 2) {
-            return userY;
-        }
-        return SQUARES_IN_ROW / 2;
+        player.addCharacterLayer(gridPane);
     }
 }
