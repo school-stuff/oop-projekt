@@ -9,29 +9,24 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
 
-import java.io.IOException;
-
 public class BattleFieldScene {
     private static int[][] map;
-    private static final int SQUARES_IN_ROW = 11;
-    private static final int SQUARES_IN_COLUMNS = 11;
+    private DisplayLocation userLocation;
 
-    private DisplayLocation userDisplayLocation;
-
-    public BattleFieldScene() throws IOException {
+    public BattleFieldScene() {
         map = new BattleFieldMap().getBattleFieldArray();
         GridPane gridPane = createGridPane();
         Scene battleFieldScene = new Scene(gridPane, Color.BLACK);
         Render.getInstance().showScene(battleFieldScene);
         //createObserver(gridPane);
-        setVisiblePart(gridPane, new DisplayLocation(5, 5));
+        setDisplayMap(gridPane, new DisplayLocation(9, 7));
     }
 
     private void createObserver (GridPane gridPane) {
-       Observable<int[]> ourObservable = GameService.getInstance().getCharacterLocation();
-        ourObservable.subscribe(data -> {
-            userDisplayLocation = new DisplayLocation(data[0], data[1]);
-            setVisiblePart(gridPane, userDisplayLocation);
+       Observable<int[]> userLocationObservable = GameService.getInstance().getCharacterLocation();
+        userLocationObservable.subscribe(data -> {
+            userLocation = new DisplayLocation(data[0], data[1]);
+            setDisplayMap(gridPane, userLocation);
         });
     }
 
@@ -44,16 +39,16 @@ public class BattleFieldScene {
         return gridPane;
     }
 
-    private void setVisiblePart(GridPane gridPane, DisplayLocation userDisplayLocation) {
+    private void setDisplayMap(GridPane gridPane, DisplayLocation displayLocation) {
         gridPane.getChildren().removeAll();
         BattleFieldSquare square;
-        for (int i = 0; i < SQUARES_IN_ROW; i++) {
-            for (int j = 0; j < SQUARES_IN_COLUMNS; j++) {
-                square = SquareTypes.getSquare(map[userDisplayLocation.upperRowIndex() + j][userDisplayLocation.leftColumnIndex() + i]);
+        for (int i = 0; i < userLocation.squaresInRow(); i++) {
+            for (int j = 0; j < userLocation.squaresInColumns(); j++) {
+                square = SquareTypes.getSquare(map[displayLocation.upperRowIndex() + j][displayLocation.leftColumnIndex() + i]);
                 square.addImageToGridPane(gridPane, j, i);
             }
         }
-        addCharacterLayer(gridPane, userDisplayLocation);
+        addCharacterLayer(gridPane, displayLocation);
     }
 
     public void addCharacterLayer(GridPane gridPane, DisplayLocation userDisplayLocation) {

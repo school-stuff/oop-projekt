@@ -1,16 +1,13 @@
 package BattleFieldComponents;
 
-import Scenes.BattleFieldScene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BattleFieldSquare {
-    private static final double SQUARE_SIZE = 555/11;
     private List<Image> pictureLayers = new ArrayList<>();
 
     public BattleFieldSquare()  {
@@ -20,8 +17,8 @@ public class BattleFieldSquare {
     public void addImageToGridPane(GridPane gridPane, int locationX, int locationY) {
         for (Image pictureLayer : pictureLayers) {
             ImageView imageView = new ImageView(pictureLayer);
-            imageView.setFitWidth(SQUARE_SIZE);
-            imageView.setFitHeight(SQUARE_SIZE);
+            imageView.setFitWidth(50);
+            imageView.setFitHeight(50);
             gridPane.add(imageView, locationY, locationX);
         }
     }
@@ -33,6 +30,4 @@ public class BattleFieldSquare {
     public boolean canGoTo(){
         return true;
     }
-
-
 }
