@@ -12,8 +12,6 @@ import java.io.IOException;
 
 public class LoginAndRegisterScene {
 
-    // TODO: Register elements
-
     private ServerCommunicationService serverCommunicationsService =
             ServerCommunicationService.getInstance();
     private LoginService loginService = LoginService.getInstance();
@@ -21,7 +19,8 @@ public class LoginAndRegisterScene {
     private TextField emailField = new TextField();
     private PasswordField passwordField = new PasswordField();
     private Label infoLabel = new Label();
-    private Button connectButton = new Button("Connect");
+    private Button loginButton = new Button("Login");
+    private Button registerButton = new Button("Register");
 
     public LoginAndRegisterScene() {
         setLoginAndRegisterSceneBase();
@@ -43,12 +42,21 @@ public class LoginAndRegisterScene {
         gridPane.add(passwordField, 1, 2);
         gridPane.add(new Label("email:"), 0, 1);
         gridPane.add(new Label("Password:"), 0, 2);
-        gridPane.add(connectButton, 0, 3);
-        gridPane.add(infoLabel, 1, 3);
+        gridPane.add(loginButton, 0, 3);
+        gridPane.add(infoLabel, 1, 4);
+        gridPane.add(registerButton, 1, 3);
 
-        connectButton.setOnAction(event -> {
+        loginButton.setOnAction(event -> {
             try {
-                onConnectButtonClick();
+                onLoginButtonClick();
+            } catch (IOException e) {
+                formSetDisable(false);
+            }
+        });
+
+        registerButton.setOnAction(event -> {
+            try {
+                onRegisterButtonClick();
             } catch (IOException e) {
                 formSetDisable(false);
             }
@@ -57,32 +65,37 @@ public class LoginAndRegisterScene {
         return gridPane;
     }
 
-    private void onConnectButtonClick() throws IOException {
+    private void onLoginButtonClick() throws IOException {
         formSetDisable(true);
-        infoLabel.setText("Establishing connection...");
+        infoLabel.setText("Logging in...");
+        loginService.authenticateUser(emailField.getText(), passwordField.getText()).subscribe(isSuccess -> {
+            if (isSuccess) {
+                displayWaitingQueue();
+            } else {
+                infoLabel.setText("Unknown email or password!");
+                formSetDisable(false);
+            }
+        });
+    }
 
-        if (serverCommunicationsService.socketTryConnect()) {
-            infoLabel.setText("Logging in...");
-
-            loginService.authenticateUser(emailField.getText(), passwordField.getText()).subscribe(isSuccess -> {
-                if (isSuccess) {
-                    displayWaitingQueue(); // switches login screen render scene to waiting queue
-
-                } else {
-                    infoLabel.setText("Unknown email or password!");
-                    formSetDisable(false);
-                }
-            });
-        } else {
-            infoLabel.setText("Connection to server failed!");
+    private void onRegisterButtonClick() throws IOException {
+        formSetDisable(true);
+        infoLabel.setText("Register in process...");
+        loginService.createUser(emailField.getText(), passwordField.getText()).subscribe(isSuccess -> {
+            if (isSuccess) {
+                infoLabel.setText("Account created!");
+            } else {
+                infoLabel.setText("Account could not be created!");
+            }
             formSetDisable(false);
-        }
+        });
     }
 
     private void formSetDisable(boolean value) {
         emailField.setDisable(value);
         passwordField.setDisable(value);
-        connectButton.setDisable(value);
+        loginButton.setDisable(value);
+        registerButton.setDisable(value);
     }
 
     private void displayWaitingQueue() {
