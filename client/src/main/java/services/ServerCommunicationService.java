@@ -65,12 +65,7 @@ public class ServerCommunicationService {
     private void pingServer() {
         new Thread(() -> {
             while (true) {
-                if (socketTryConnect()) {
-                    isConnected.onNext(true);
-                    isConnected.onComplete();
-                } else {
-                    isConnected.onNext(false);
-                }
+                isConnected.onNext(socketTryConnect());
                 try {
                     Thread.sleep(2000);
                 } catch (InterruptedException e) {
@@ -85,7 +80,6 @@ public class ServerCommunicationService {
             return true;
         }
         try {
-            System.out.println("trying to connect");
             socket.connect(new InetSocketAddress("localhost", 8001));
         } catch (IOException e) {
             socket = new Socket();
