@@ -40,7 +40,9 @@ public class LoginAndRegisterScene {
             if (isConnected) {
                 Platform.runLater(() -> infoLabel.setText("")); // Solution to a common JavaFX threading issue
                 formSetDisable(false);
-                isConnectedSubscription.dispose();
+                if (isConnectedSubscription != null) {
+                    isConnectedSubscription.dispose();
+                }
             }
         });
     }
