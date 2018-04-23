@@ -66,6 +66,9 @@ public class LoginAndRegisterScene {
     }
 
     private void onLoginButtonClick() throws IOException {
+        if (!emailMatchesRegEx(emailField.getText())) {
+            return;
+        }
         formSetDisable(true);
         infoLabel.setText("Logging in...");
         loginService.authenticateUser(emailField.getText(), passwordField.getText()).subscribe(isSuccess -> {
@@ -79,6 +82,9 @@ public class LoginAndRegisterScene {
     }
 
     private void onRegisterButtonClick() throws IOException {
+        if (!emailMatchesRegEx(emailField.getText())) {
+            return;
+        }
         formSetDisable(true);
         infoLabel.setText("Register in process...");
         loginService.createUser(emailField.getText(), passwordField.getText()).subscribe(isSuccess -> {
@@ -89,6 +95,15 @@ public class LoginAndRegisterScene {
             }
             formSetDisable(false);
         });
+    }
+
+    private boolean emailMatchesRegEx(String value) {
+        String regEx = "^([a-zA-Z0-9_\\-\\.]+)@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.)|(([a-zA-Z0-9\\-]+\\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\\]?)$";
+        if (!value.matches(regEx)) {
+            infoLabel.setText("Invalid email");
+            return false;
+        }
+        return true;
     }
 
     private void formSetDisable(boolean value) {
