@@ -12,7 +12,17 @@ public class BattleFieldMap {
     }
 
     public static boolean canGoToSquare(int x, int y) {
+        if (x > battleFieldArray[0].length || y > battleFieldArray.length){
+            return false;
+        }
         return SquareTypes.getSquare(battleFieldArray[y][x]).canGoTo();
+    }
+
+    public static int[] mapSize() {
+        int[] result = new int[2];
+        result[0] = battleFieldArray.length;
+        result[1] = battleFieldArray[0].length;
+        return result;
     }
 
     private void createMap(){

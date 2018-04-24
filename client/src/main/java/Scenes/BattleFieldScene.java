@@ -32,7 +32,6 @@ public class BattleFieldScene extends JPanel {
     public BattleFieldScene() {
         map = new BattleFieldMap().getBattleFieldArray();
         createGridPane();
-        userLocation = new DisplayLocation(4, 5);
         Scene battleFieldScene = new Scene(gridPane, Color.BLACK);
         Render render = Render.getInstance();
         render.showScene(battleFieldScene);
@@ -43,14 +42,18 @@ public class BattleFieldScene extends JPanel {
                     if (direction.getKeyCode() == event.getCode()){
                         int newX = userLocation.getUserFullMapX() + direction.getX();
                         int newY = userLocation.getUserFullMapY() + direction.getY();
-                        userLocation = new DisplayLocation(newX, newY);
-                        setDisplayMap();
+                        if (BattleFieldMap.canGoToSquare(newY, newX)) {
+                            userLocation = new DisplayLocation(newX, newY);
+                            setDisplayMap();
+                            // send server info
+                        }
                     }
                 }
             }
         });
-        //createObserver(gridPane);
+        userLocation = new DisplayLocation(48, 48);
         setDisplayMap();
+        //createObserver();
     }
 
     private void createObserver() {
