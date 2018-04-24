@@ -14,31 +14,31 @@ public class DisplayLocation {
     }
 
     public int userX(){
-        if (inTheMiddleOfMap()) {
+        if (userFullMapX > horisontalHalf()){
             return horisontalHalf();
         }
         return userFullMapX;
     }
 
     public int userY() {
-        if (inTheMiddleOfMap()) {
+        if (userFullMapY > verticalHalf()) {
             return verticalHalf();
         }
         return userFullMapY;
     }
 
     public int leftColumnIndex() {
-        if (inTheMiddleOfMap()) {
-            return userFullMapX - verticalHalf();
+        if (userFullMapX < horisontalHalf()){
+            return 0;
         }
-        return 0;
+        return userFullMapX - verticalHalf();
     }
 
     public int upperRowIndex() {
-        if (inTheMiddleOfMap()) {
-            return userFullMapY - horisontalHalf();
+        if (userFullMapY < verticalHalf()) {
+            return 0;
         }
-        return 0;
+        return userFullMapY - verticalHalf();
     }
 
     public int squaresInRow() {
@@ -47,6 +47,14 @@ public class DisplayLocation {
 
     public int squaresInColumns() {
         return SQUARES_IN_COLUMNS;
+    }
+
+    public int getUserFullMapX() {
+        return userFullMapX;
+    }
+
+    public int getUserFullMapY() {
+        return userFullMapY;
     }
 
     private boolean inTheMiddleOfMap(){
