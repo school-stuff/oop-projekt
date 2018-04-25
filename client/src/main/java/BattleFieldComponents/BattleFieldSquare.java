@@ -1,5 +1,6 @@
 package BattleFieldComponents;
 
+import Scenes.BattleFieldScene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -17,6 +18,7 @@ public class BattleFieldSquare {
     public void addImageToGridPane(GridPane gridPane, int locationX, int locationY) {
         for (Image pictureLayer : pictureLayers) {
             ImageView imageView = new ImageView(pictureLayer);
+
             imageView.setFitWidth(50);
             imageView.setFitHeight(50);
             gridPane.add(imageView, locationY, locationX);

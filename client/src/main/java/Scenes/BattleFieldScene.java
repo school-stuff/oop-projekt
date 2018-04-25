@@ -1,5 +1,6 @@
 package Scenes;
 
+
 import BattleFieldComponents.*;
 import io.reactivex.Observable;
 import javafx.event.EventHandler;
@@ -10,8 +11,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
-
-import javax.swing.*;
 
 public class BattleFieldScene extends JPanel {
     private static int[][] map;
@@ -85,5 +84,4 @@ public class BattleFieldScene extends JPanel {
         imageView.setFitHeight(50);
         gridPane.add(imageView, userLocation.userX(), userLocation.userY());
     }
-    //TODO: character class
 }

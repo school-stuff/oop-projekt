@@ -18,12 +18,12 @@ public class LoginService {
 
     ServerCommunicationService server = ServerCommunicationService.getInstance();
 
-    public Observable<Boolean> authenticateUser(String username, String password) throws IOException {
+    public Observable<Boolean> authenticateUser(String email, String password) throws IOException {
         ReplaySubject<Boolean> subject = ReplaySubject.create();
 
         Auth.LoginData loginData =
             Auth.LoginData.newBuilder()
-                .setEmail(username)
+                .setEmail(email)
                 .setPassword(password)
                 .build();
 
@@ -41,6 +41,26 @@ public class LoginService {
         return subject;
     }
 
-    // TODO: Register method
+    public Observable<Boolean> createUser(String email, String password) throws IOException {
+        ReplaySubject<Boolean> subject = ReplaySubject.create();
 
+        Auth.LoginData loginData =
+            Auth.LoginData.newBuilder()
+                .setEmail(email)
+                .setPassword(password)
+                .build();
+
+        server.sendData("mutation", "register", loginData);
+        server.getData("registerSuccess").subscribe(data -> {
+            Auth.AuthResponse response = (Auth.AuthResponse) data;
+
+            if (response.getMessage() == Auth.AuthResponse.MessageType.Error) {
+                subject.onNext(false);
+            } else if (response.getMessage() == Auth.AuthResponse.MessageType.Success) {
+                subject.onNext(true);
+            }
+        });
+
+        return subject;
+    }
 }

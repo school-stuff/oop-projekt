@@ -1,4 +1,5 @@
 package BattleFieldComponents;
+import Scenes.BattleFieldScene;
 
 public class BattleFieldMap {
     private final static int VERTICAL_LENGTH = 50;
