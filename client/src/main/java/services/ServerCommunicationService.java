@@ -18,6 +18,8 @@ public class ServerCommunicationService {
 
     private Socket socket;
 
+    public ReplaySubject<Boolean> isConnected = ReplaySubject.create(1);
+
     private static ServerCommunicationService ourInstance = new ServerCommunicationService();
     private OutputStream output;
     private DataOutputStream dataOutput;
@@ -31,12 +33,13 @@ public class ServerCommunicationService {
 
     ServerCommunicationService() {
         this.socket = new Socket();
+        pingServer();
+        serverCommunicationThread();
+    }
 
+    private void serverCommunicationThread() {
         new Thread(() -> {
-            socketTryConnect();
-            try (
-                DataInputStream inputStream = new DataInputStream(socket.getInputStream())
-            ) {
+            try (DataInputStream inputStream = new DataInputStream(socket.getInputStream())) {
                 while (true) {
                     String messageType = inputStream.readUTF();
                     String messageName = inputStream.readUTF();
@@ -59,6 +62,19 @@ public class ServerCommunicationService {
         }).start();
     }
 
+    private void pingServer() {
+        new Thread(() -> {
+            while (true) {
+                isConnected.onNext(socketTryConnect());
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    continue;
+                }
+            }
+        }).start();
+    }
+
     public boolean socketTryConnect() {
         if (socket.isConnected()) {
             return true;
@@ -66,6 +82,7 @@ public class ServerCommunicationService {
         try {
             socket.connect(new InetSocketAddress("localhost", 8001));
         } catch (IOException e) {
+            socket = new Socket();
             return false;
         }
         return true;
@@ -158,5 +175,3 @@ public class ServerCommunicationService {
         createQuery(mutationName).onNext(data);
     }
 }
-
-
