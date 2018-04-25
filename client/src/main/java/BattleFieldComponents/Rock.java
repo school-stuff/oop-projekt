@@ -1,7 +1,5 @@
 package BattleFieldComponents;
 
-import java.io.IOException;
-
 public class Rock extends BattleFieldSquare {
 
     public Rock()  {

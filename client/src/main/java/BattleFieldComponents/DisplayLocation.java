@@ -1,59 +1,62 @@
 package BattleFieldComponents;
 
 public class DisplayLocation {
-    private static final int SQUARES_IN_ROW = 11;
+    private static final int SQUARES_IN_ROWS = 11;
     private static final int SQUARES_IN_COLUMNS = 11;
 
-    private int userFullMapX;
-    private int userFullMapY;
+    private final int userFullMapX;
+    private final int userFullMapY;
+    private final boolean userInTheMiddle;
 
     public DisplayLocation(int userFullMapX, int userFullMapY) {
         this.userFullMapX = userFullMapX;
         this.userFullMapY = userFullMapY;
+        userInTheMiddle = isUserInTheMiddle();
     }
 
-    public int userX(){
-        if (userFullMapX > horisontalHalf() && userFullMapX < BattleFieldMap.mapSize()[1] - horisontalHalf()){
-            return horisontalHalf();
+    public int userX() {
+        if (isNearRightSide()) {
+            return userFullMapX - leftColumnIndex();
+
         }
-        if (userFullMapX >= BattleFieldMap.mapSize()[1] - horisontalHalf()) {
-            return SQUARES_IN_COLUMNS - (BattleFieldMap.mapSize()[1] - userFullMapX);
+        if (isNearLeftSide()) {
+            return userFullMapX;
         }
-        return userFullMapX;
+        return horisontalCenter();
     }
 
     public int userY() {
-        if (userFullMapY > verticalHalf() && userFullMapY < BattleFieldMap.mapSize()[0] - verticalHalf()) {
-            return verticalHalf();
+        if (isNearBottom()) {
+            return userFullMapY - upperRowIndex();
         }
-        if (userFullMapY >= BattleFieldMap.mapSize()[0] - verticalHalf()) {
-            return SQUARES_IN_ROW - (BattleFieldMap.mapSize()[0] - userFullMapY);
+        if (isNearUpperRow()) {
+            return userFullMapY;
         }
-        return userFullMapY;
+        return verticalCenter();
     }
 
     public int leftColumnIndex() {
-        if (userFullMapX < horisontalHalf()){
+        if (isNearRightSide()) {
+            return BattleFieldMap.width() - SQUARES_IN_COLUMNS;
+        }
+        if (isNearLeftSide()) {
             return 0;
         }
-        if ((BattleFieldMap.mapSize()[1] - horisontalHalf()) <= userFullMapX){
-            return BattleFieldMap.mapSize()[1] - SQUARES_IN_COLUMNS;
-        }
-        return userFullMapX - horisontalHalf();
+        return userFullMapX - horisontalCenter();
     }
 
     public int upperRowIndex() {
-        if (userFullMapY < verticalHalf()) {
+        if (isNearBottom()) {
+            return BattleFieldMap.heigth() - SQUARES_IN_ROWS;
+        }
+        if (isNearUpperRow()) {
             return 0;
         }
-        if ((BattleFieldMap.mapSize()[0] - verticalHalf()) <= userFullMapY){
-            return BattleFieldMap.mapSize()[0] - SQUARES_IN_ROW;
-        }
-        return userFullMapY - verticalHalf();
+        return userFullMapY - verticalCenter();
     }
 
     public int squaresInRow() {
-        return SQUARES_IN_ROW;
+        return SQUARES_IN_ROWS;
     }
 
     public int squaresInColumns() {
@@ -68,12 +71,31 @@ public class DisplayLocation {
         return userFullMapY;
     }
 
-    private int verticalHalf() {
-        return SQUARES_IN_ROW / 2;
+    private boolean isNearLeftSide() {
+        return userFullMapX < horisontalCenter();
     }
 
-    private int horisontalHalf() {
-        return SQUARES_IN_COLUMNS / 2;
+    private boolean isNearRightSide() {
+        return userFullMapX > BattleFieldMap.width() - horisontalCenter() - 1;
     }
 
+    private boolean isNearBottom() {
+        return userFullMapY > BattleFieldMap.heigth() - 1 - verticalCenter();
+    }
+
+    private boolean isNearUpperRow() {
+        return userFullMapY < verticalCenter();
+    }
+
+    private boolean isUserInTheMiddle() {
+        return !isNearBottom() && !isNearUpperRow() && !isNearRightSide() && !isNearLeftSide();
+    }
+
+    private int verticalCenter() {
+        return (SQUARES_IN_ROWS - 1) / 2;
+    }
+
+    private int horisontalCenter() {
+        return (SQUARES_IN_COLUMNS - 1) / 2;
+    }
 }

@@ -2,27 +2,16 @@ package Scenes;
 
 import BattleFieldComponents.*;
 import io.reactivex.Observable;
-import javafx.embed.swing.SwingNode;
-import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Window;
 import services.GameService;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
 
 public class BattleFieldScene extends JPanel {
     private static int[][] map;
@@ -31,36 +20,41 @@ public class BattleFieldScene extends JPanel {
 
     public BattleFieldScene() {
         map = new BattleFieldMap().getBattleFieldArray();
-        createGridPane();
-        Scene battleFieldScene = new Scene(gridPane, Color.BLACK);
         Render render = Render.getInstance();
+        createGridPane();
+        showScene(render);
+        addKeyEventHandler(render);
+        createObserver();
+    }
+
+    private void showScene(Render render) {
+        Scene battleFieldScene = new Scene(gridPane, Color.BLACK);
         render.showScene(battleFieldScene);
-        render.addEKeyEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, new EventHandler<javafx.scene.input.KeyEvent>() {
+    }
+
+    private void addKeyEventHandler(Render render) {
+        render.addEKeyEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
-            public void handle(javafx.scene.input.KeyEvent event) {
+            public void handle(KeyEvent event) {
+                System.out.println("Key pressed: " + event.getCode().getName());
                 for (Direction direction : Direction.values()) {
                     if (direction.getKeyCode() == event.getCode()){
                         int newX = userLocation.getUserFullMapX() + direction.getX();
                         int newY = userLocation.getUserFullMapY() + direction.getY();
-                        if (BattleFieldMap.canGoToSquare(newY, newX)) {
-                            userLocation = new DisplayLocation(newX, newY);
-                            setDisplayMap();
+                        if (BattleFieldMap.canGoToSquare(newX, newY)) {
                             // send server info
                         }
                     }
                 }
             }
         });
-        userLocation = new DisplayLocation(48, 48);
-        setDisplayMap();
-        //createObserver();
     }
 
     private void createObserver() {
         Observable<int[]> userLocationObservable = GameService.getInstance().getCharacterLocation();
         userLocationObservable.subscribe(data -> {
             userLocation = new DisplayLocation(data[0], data[1]);
-            setDisplayMap();
+            showMapNodes();
         });
     }
 
@@ -73,7 +67,7 @@ public class BattleFieldScene extends JPanel {
         this.gridPane = gridPane;
     }
 
-    private void setDisplayMap() {
+    private void showMapNodes() {
         gridPane.getChildren().removeAll();
         BattleFieldSquare square;
         for (int i = 0; i < userLocation.squaresInRow(); i++) {
@@ -89,7 +83,7 @@ public class BattleFieldScene extends JPanel {
         ImageView imageView = new ImageView(ImageOpener.getCharacterImage());
         imageView.setFitWidth(50);
         imageView.setFitHeight(50);
-        imageView.setFocusTraversable(true);
         gridPane.add(imageView, userLocation.userX(), userLocation.userY());
     }
+    //TODO: character class
 }
