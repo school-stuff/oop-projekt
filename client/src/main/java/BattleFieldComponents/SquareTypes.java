@@ -4,10 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum SquareTypes {
-    ROCK(-1, new Rock()),
-    GRASS(0, new BattleFieldSquare()),
-    WATER(1, new Water()),
-    WALL(2, new Wall());
+    ROCK('R', new Rock()),
+    GRASS('G', new BattleFieldSquare()),
+    WATER('W', new Water()),
+    WALL('X', new Wall());
 
     private static final Map<Integer, SquareTypes> myMap = new HashMap<>();
     static {

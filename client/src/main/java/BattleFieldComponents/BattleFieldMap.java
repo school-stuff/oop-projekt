@@ -1,16 +1,20 @@
 package BattleFieldComponents;
 import Scenes.BattleFieldScene;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 public class BattleFieldMap {
     private final static int VERTICAL_LENGTH = 50;
     private final static int HORISONTAL_LENGTH = 50;
-    private final static int[][] battleFieldArray = new int[VERTICAL_LENGTH][HORISONTAL_LENGTH];
+    private final static char[][] battleFieldArray = new char[VERTICAL_LENGTH][HORISONTAL_LENGTH];
 
     public BattleFieldMap() {
         createMap();
     }
 
-    public int[][] getBattleFieldArray() {
+    public char[][] getBattleFieldArray() {
         return battleFieldArray;
     }
 
@@ -29,25 +33,18 @@ public class BattleFieldMap {
         return HORISONTAL_LENGTH;
     }
 
-    private void createMap(){
-        for (int i = 0; i < 50; i++) {
-            if (i == 0 || i == 49){
-                for (int j = 0; j < 50; j++) {
-                    battleFieldArray[i][j] = -1;
+    private void createMap() {
+        File map = new File("client/src/main/resources/maps/map.txt");
+        try (FileInputStream fileInputStream = new FileInputStream(map)) {
+            for (int i = 0; i < VERTICAL_LENGTH; i++) {
+                for (int j = 0; j < HORISONTAL_LENGTH; j++) {
+                    battleFieldArray[i][j] = (char) fileInputStream.read();
                 }
-            } else {
-                for (int j = 0; j < 50; j++) {
-                    if (j == 0 || j == 49) {
-                        battleFieldArray[i][j] = -1;
-                    } else if (j > 3 && j < 5 && i > 6 && i < 12){
-                        battleFieldArray[i][j] = 1;
-                    } else if (j == 7 && i > 4) {
-                        battleFieldArray[i][j] = 2;
-                    } else {
-                        battleFieldArray[i][j] = 0;
-                    }
-                }
+                fileInputStream.skip(2);
             }
+        } catch (IOException e) {
+            System.err.println("Map parsing error: " + e.toString());
+            // TODO: handle
         }
     }
 }
