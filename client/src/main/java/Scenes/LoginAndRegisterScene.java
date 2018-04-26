@@ -1,5 +1,7 @@
 package Scenes;
 
+import io.reactivex.disposables.Disposable;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -20,14 +22,30 @@ public class LoginAndRegisterScene {
     private Label infoLabel = new Label();
     private Button loginButton = new Button("Login");
     private Button registerButton = new Button("Register");
+
+    private Disposable isConnectedSubscription;
+
+
+
     public LoginAndRegisterScene() {
         setLoginAndRegisterSceneBase();
     }
 
     public void setLoginAndRegisterSceneBase() {
+        formSetDisable(true);
+        infoLabel.setText("Connecting to server...");
         GridPane gridPane = createGridPane();
         Scene loginAndRegisterScene = new Scene(gridPane);
         Render.getInstance().showScene(loginAndRegisterScene);
+        isConnectedSubscription = serverCommunicationsService.isConnected.subscribe(isConnected -> {
+            if (isConnected) {
+                Platform.runLater(() -> infoLabel.setText("")); // Solution to a common JavaFX threading issue
+                formSetDisable(false);
+                if (isConnectedSubscription != null) {
+                    isConnectedSubscription.dispose();
+                }
+            }
+        });
     }
 
     private GridPane createGridPane() {

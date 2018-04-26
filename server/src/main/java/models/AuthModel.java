@@ -3,6 +3,7 @@ package models;
 import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import org.mindrot.jbcrypt.BCrypt;
 import services.DatabaseService;
 import services.QueryHandler;
 import shared.user.auth.Auth;
@@ -71,7 +72,7 @@ public class AuthModel {
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
 
-            if (password.equals(resultSet.getString("password"))) {
+            if (saltedPassword(password).equals(resultSet.getString("password"))) {
                 data = Auth.AuthResponse.newBuilder()
                         .setMessage(Auth.AuthResponse.MessageType.Success)
                         .build();
@@ -100,7 +101,7 @@ public class AuthModel {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO user(email, password) VALUES (?, ?)");
             statement.setString(1, email);
-            statement.setString(2, password);
+            statement.setString(2, saltedPassword(password));
             statement.executeUpdate();
             data = Auth.AuthResponse.newBuilder()
                     .setMessage(Auth.AuthResponse.MessageType.Success)
@@ -113,5 +114,9 @@ public class AuthModel {
         } finally {
             queryHandler.sendData("update", "registerSuccess", data);
         }
+    }
+
+    private String saltedPassword(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt(5));
     }
 }
