@@ -9,23 +9,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BattleFieldSquare {
-    private static final int SQUARE_SIZE = 50;
     private List<Image> pictureLayers = new ArrayList<>();
 
-    public BattleFieldSquare() {
-        pictureLayers.add(BattleFieldScene.getOpenedImages().getGrassImage());
+    public BattleFieldSquare()  {
+        pictureLayers.add(ImageOpener.getGrassImage());
     }
 
     public void addImageToGridPane(GridPane gridPane, int locationX, int locationY) {
         for (Image pictureLayer : pictureLayers) {
             ImageView imageView = new ImageView(pictureLayer);
-            imageView.setFitWidth(SQUARE_SIZE);
-            imageView.setFitHeight(SQUARE_SIZE);
+
+            imageView.setFitWidth(50);
+            imageView.setFitHeight(50);
             gridPane.add(imageView, locationY, locationX);
         }
     }
 
     public void addLayer(Image image) {
         pictureLayers.add(image);
+    }
+
+    public boolean canGoTo(){
+        return true;
     }
 }

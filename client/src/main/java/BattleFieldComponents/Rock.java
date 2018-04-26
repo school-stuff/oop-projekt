@@ -4,8 +4,13 @@ import Scenes.BattleFieldScene;
 
 public class Rock extends BattleFieldSquare {
 
-    public Rock() {
+    public Rock()  {
         super();
-        addLayer(BattleFieldScene.getOpenedImages().getRockImage());
+        addLayer(ImageOpener.getRockImage());
+    }
+
+    @Override
+    public boolean canGoTo() {
+        return false;
     }
 }

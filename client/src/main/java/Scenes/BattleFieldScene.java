@@ -1,104 +1,87 @@
 package Scenes;
 
-import BattleFieldComponents.BattleFieldMap;
-import BattleFieldComponents.BattleFieldSquare;
-import BattleFieldComponents.OpenedImages;
-import BattleFieldComponents.SquareTypes;
+
+import BattleFieldComponents.*;
 import io.reactivex.Observable;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
 
-import java.io.IOException;
+public class BattleFieldScene extends JPanel {
+    private static int[][] map;
+    private DisplayLocation userLocation;
+    private GridPane gridPane;
 
-public class BattleFieldScene {
-    private final int[][] map;
-    private static int SQUARES_IN_ROW = 11;
-    private static int NUMBER_OF_COLUMNS = 11;
-    private static OpenedImages images;
-    private boolean sceneOpened = false;
-
-    public BattleFieldScene() throws IOException, InterruptedException {
-        map = new BattleFieldMap().createMap();
-        images = new OpenedImages();
-        GridPane gridPane = createGridPane();
-        creatingBattleField(gridPane);
+    public BattleFieldScene() {
+        map = new BattleFieldMap().getBattleFieldArray();
+        Render render = Render.getInstance();
+        createGridPane();
+        showScene(render);
+        addKeyEventHandler(render);
+        createObserver();
     }
 
-    private void creatingBattleField(GridPane gridPane) throws IOException{
+    private void showScene(Render render) {
+        Scene battleFieldScene = new Scene(gridPane, Color.BLACK);
+        render.showScene(battleFieldScene);
+    }
 
-       Observable<int[]> ourObservable = GameService.getInstance().getCharacterLocation();
-        ourObservable.subscribe(data -> {
-            if (!sceneOpened) {
-                Scene battleFieldScene = new Scene(gridPane);
-                battleFieldScene.setFill(Color.BLACK);
-                getVisiblePart(gridPane, data[0], data[1]);
-                Render.getInstance().showScene(battleFieldScene);
-                sceneOpened = true;
+    private void addKeyEventHandler(Render render) {
+        render.addEKeyEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent event) {
+                System.out.println("Key pressed: " + event.getCode().getName());
+                for (Direction direction : Direction.values()) {
+                    if (direction.getKeyCode() == event.getCode()){
+                        int newX = userLocation.getUserFullMapX() + direction.getX();
+                        int newY = userLocation.getUserFullMapY() + direction.getY();
+                        if (BattleFieldMap.canGoToSquare(newX, newY)) {
+                            // send server info
+                        }
+                    }
+                }
             }
-            getVisiblePart(gridPane, data[0], data[1]);
         });
     }
 
-    public static OpenedImages getOpenedImages() {
-        return images;
+    private void createObserver() {
+        Observable<int[]> userLocationObservable = GameService.getInstance().getCharacterLocation();
+        userLocationObservable.subscribe(data -> {
+            userLocation = new DisplayLocation(data[0], data[1]);
+            showMapNodes();
+        });
     }
 
-    private GridPane createGridPane() {
+    private void createGridPane() {
         GridPane gridPane = new GridPane();
         gridPane.setVgap(1);
         gridPane.setHgap(1);
 
         gridPane.setPadding(new Insets(0, 0, 0, 0));
-        return gridPane;
+        this.gridPane = gridPane;
     }
 
-    private void getVisiblePart(GridPane gridPane, int userX, int userY) {
+    private void showMapNodes() {
         gridPane.getChildren().removeAll();
         BattleFieldSquare square;
-        for (int i = 0; i < SQUARES_IN_ROW; i++) {
-            for (int j = 0; j < NUMBER_OF_COLUMNS; j++) {
-                if (userInTheMiddle(userX, userY)) {
-                   square = createSquare(map[userX - (NUMBER_OF_COLUMNS / 2) + j][userY - (SQUARES_IN_ROW / 2) + i]);
-                } else {
-                    square = createSquare(map[j][i]);
-                }
+        for (int i = 0; i < userLocation.squaresInRow(); i++) {
+            for (int j = 0; j < userLocation.squaresInColumns(); j++) {
+                square = SquareTypes.getSquare(map[userLocation.upperRowIndex() + j][userLocation.leftColumnIndex() + i]);
                 square.addImageToGridPane(gridPane, j, i);
             }
         }
-        addExtraLayer(images.getCharacterImage(),gridPane, userXVisible(userX), userYVisible(userY));
+        addCharacterLayer();
     }
 
-    private BattleFieldSquare createSquare(int type) {
-        return SquareTypes.getSquare(type);
-    }
-
-    private void addExtraLayer(Image layerImage, GridPane gridPane, int x, int y){
-        ImageView imageView = new ImageView(layerImage);
+    public void addCharacterLayer() {
+        ImageView imageView = new ImageView(ImageOpener.getCharacterImage());
         imageView.setFitWidth(50);
         imageView.setFitHeight(50);
-        gridPane.add(imageView, y, x);
-    }
-
-    private boolean userInTheMiddle(int userX, int userY){
-        return userY >= SQUARES_IN_ROW / 2 && userX >= NUMBER_OF_COLUMNS / 2;
-    }
-
-    private int userXVisible(int userX){
-        if (userX < NUMBER_OF_COLUMNS / 2) {
-            return userX;
-        }
-        return NUMBER_OF_COLUMNS / 2;
-    }
-
-    private int userYVisible(int userY) {
-        if (userY < SQUARES_IN_ROW / 2) {
-            return userY;
-        }
-        return SQUARES_IN_ROW / 2;
+        gridPane.add(imageView, userLocation.userX(), userLocation.userY());
     }
 }

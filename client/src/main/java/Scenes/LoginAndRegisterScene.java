@@ -13,7 +13,6 @@ import services.ServerCommunicationService;
 import java.io.IOException;
 
 public class LoginAndRegisterScene {
-
     private ServerCommunicationService serverCommunicationsService =
             ServerCommunicationService.getInstance();
     private LoginService loginService = LoginService.getInstance();
@@ -23,7 +22,9 @@ public class LoginAndRegisterScene {
     private Label infoLabel = new Label();
     private Button loginButton = new Button("Login");
     private Button registerButton = new Button("Register");
+
     private Disposable isConnectedSubscription;
+
 
 
     public LoginAndRegisterScene() {
@@ -52,7 +53,6 @@ public class LoginAndRegisterScene {
         gridPane.setPadding(new Insets(10, 10, 10, 10));
         gridPane.setHgap(10);
         gridPane.setVgap(10);
-
         gridPane.add(emailField, 1, 1);
         gridPane.add(passwordField, 1, 2);
         gridPane.add(new Label("email:"), 0, 1);

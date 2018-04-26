@@ -1,9 +1,12 @@
 package Scenes;
 
 import javafx.application.Application;
-import javafx.application.Platform;
+import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
+
 import javafx.scene.Scene;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
@@ -33,12 +36,15 @@ public class Render extends Application {
         });
 
         new LoginAndRegisterScene();
-
         primaryStage.show();
         new BattleFieldScene();
     }
 
     public void showScene(Scene scene) {
         primaryStage.setScene(scene);
+    }
+
+    public void addEKeyEventHandler(EventType eventType, EventHandler<KeyEvent> eventHandler){
+        primaryStage.addEventHandler(eventType, eventHandler);
     }
 }
