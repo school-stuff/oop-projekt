@@ -1,5 +1,7 @@
 package battlefield;
 
+import enums.SquareTypes;
+
 public class BattleFieldMap {
     private final static int VERTICAL_LENGTH = 50;
     private final static int HORISONTAL_LENGTH = 50;

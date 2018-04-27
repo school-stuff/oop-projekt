@@ -2,6 +2,8 @@ package scenes;
 
 
 import battlefield.*;
+import enums.Direction;
+import enums.SquareTypes;
 import io.reactivex.Observable;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
