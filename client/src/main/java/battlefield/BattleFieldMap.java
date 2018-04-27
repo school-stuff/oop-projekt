@@ -1,5 +1,6 @@
-package BattleFieldComponents;
-import Scenes.BattleFieldScene;
+package battlefield;
+
+import enums.SquareTypes;
 
 public class BattleFieldMap {
     private final static int VERTICAL_LENGTH = 50;

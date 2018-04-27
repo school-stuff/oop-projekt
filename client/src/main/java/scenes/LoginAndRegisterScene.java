@@ -1,4 +1,4 @@
-package Scenes;
+package scenes;
 
 import io.reactivex.disposables.Disposable;
 import javafx.application.Platform;

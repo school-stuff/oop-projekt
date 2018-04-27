@@ -1,7 +1,9 @@
-package Scenes;
+package scenes;
 
 
-import BattleFieldComponents.*;
+import battlefield.*;
+import enums.Direction;
+import enums.SquareTypes;
 import io.reactivex.Observable;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -12,9 +14,9 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
 
-public class BattleFieldScene extends JPanel {
+public class BattleFieldScene {
     private static int[][] map;
-    private DisplayLocation userLocation;
+    private RenderedArea userLocation;
     private GridPane gridPane;
 
     public BattleFieldScene() {
@@ -38,8 +40,8 @@ public class BattleFieldScene extends JPanel {
                 System.out.println("Key pressed: " + event.getCode().getName());
                 for (Direction direction : Direction.values()) {
                     if (direction.getKeyCode() == event.getCode()){
-                        int newX = userLocation.getUserFullMapX() + direction.getX();
-                        int newY = userLocation.getUserFullMapY() + direction.getY();
+                        int newX = userLocation.getPlayerX() + direction.getX();
+                        int newY = userLocation.getPlayerY() + direction.getY();
                         if (BattleFieldMap.canGoToSquare(newX, newY)) {
                             // send server info
                         }
@@ -52,7 +54,7 @@ public class BattleFieldScene extends JPanel {
     private void createObserver() {
         Observable<int[]> userLocationObservable = GameService.getInstance().getCharacterLocation();
         userLocationObservable.subscribe(data -> {
-            userLocation = new DisplayLocation(data[0], data[1]);
+            userLocation = new RenderedArea(data[0], data[1]);
             showMapNodes();
         });
     }
@@ -82,6 +84,6 @@ public class BattleFieldScene extends JPanel {
         ImageView imageView = new ImageView(ImageOpener.getCharacterImage());
         imageView.setFitWidth(50);
         imageView.setFitHeight(50);
-        gridPane.add(imageView, userLocation.userX(), userLocation.userY());
+        gridPane.add(imageView, userLocation.renderedX(), userLocation.renderedY());
     }
 }

@@ -1,7 +1,7 @@
-package Scenes;
+package scenes;
 
 import javafx.application.Application;
-import javafx.event.Event;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 
@@ -37,7 +37,6 @@ public class Render extends Application {
 
         new LoginAndRegisterScene();
         primaryStage.show();
-        new BattleFieldScene();
     }
 
     public void showScene(Scene scene) {

@@ -1,4 +1,4 @@
-package BattleFieldComponents;
+package enums;
 
 import javafx.scene.input.KeyCode;
 

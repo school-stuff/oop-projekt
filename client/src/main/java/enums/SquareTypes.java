@@ -1,4 +1,9 @@
-package BattleFieldComponents;
+package enums;
+
+import battlefield.BattleFieldSquare;
+import battlefield.Rock;
+import battlefield.Wall;
+import battlefield.Water;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package BattleFieldComponents;
+package battlefield;
 
 public class Wall extends BattleFieldSquare{
     public Wall() {

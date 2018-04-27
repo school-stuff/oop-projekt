@@ -1,8 +1,4 @@
-package BattleFieldComponents;
-
-import Scenes.BattleFieldScene;
-
-import java.io.IOException;
+package battlefield;
 
 public class Water extends BattleFieldSquare{
     public Water()  {

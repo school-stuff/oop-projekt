@@ -1,6 +1,5 @@
-package BattleFieldComponents;
+package battlefield;
 
-import Scenes.BattleFieldScene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
