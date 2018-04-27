@@ -3,52 +3,29 @@ package battlefield;
 import enums.SquareTypes;
 
 public class BattleFieldMap {
-    private final static int VERTICAL_LENGTH = 50;
-    private final static int HORISONTAL_LENGTH = 50;
-    private final static int[][] battleFieldArray = new int[VERTICAL_LENGTH][HORISONTAL_LENGTH];
 
-    public BattleFieldMap() {
-        createMap();
-    }
+    public BattleFieldMap() { }
 
     public int[][] getBattleFieldArray() {
-        return battleFieldArray;
+        return Maps.map;
     }
 
-    public static boolean canGoToSquare(int x, int y) {
-        if (x < 0 || y < 0 || x > battleFieldArray[0].length - 1 || y > battleFieldArray.length - 1){
+    public boolean canGoToSquare(int x, int y) {
+        if (x < 0 || y < 0 || x > Maps.map[0].length - 1 || y > Maps.map.length - 1){
             return false;
         }
-        return SquareTypes.getSquare(battleFieldArray[y][x]).canGoTo();
+        return SquareTypes.getSquare(Maps.map[y][x]).canGoTo();
     }
 
-    public static int heigth() {
-        return VERTICAL_LENGTH;
+    public int height() {
+        return Maps.map.length;
     }
 
-    public static int width() {
-        return HORISONTAL_LENGTH;
+    public int width() {
+        return Maps.map[0].length;
     }
 
-    private void createMap(){
-        for (int i = 0; i < 50; i++) {
-            if (i == 0 || i == 49){
-                for (int j = 0; j < 50; j++) {
-                    battleFieldArray[i][j] = -1;
-                }
-            } else {
-                for (int j = 0; j < 50; j++) {
-                    if (j == 0 || j == 49) {
-                        battleFieldArray[i][j] = -1;
-                    } else if (j > 3 && j < 5 && i > 6 && i < 12){
-                        battleFieldArray[i][j] = 1;
-                    } else if (j == 7 && i > 4) {
-                        battleFieldArray[i][j] = 2;
-                    } else {
-                        battleFieldArray[i][j] = 0;
-                    }
-                }
-            }
-        }
+    public void setMap(int coordinateX, int coordinateY, int squareType) {
+        Maps.map[coordinateY][coordinateX] = squareType;
     }
 }

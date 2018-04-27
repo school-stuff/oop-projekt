@@ -7,6 +7,8 @@ public class RenderedArea {
     private final int playerX;
     private final int playerY;
 
+    BattleFieldMap battleFieldMap = new BattleFieldMap();
+
     public RenderedArea(int playerX, int playerY) {
         this.playerX = playerX;
         this.playerY = playerY;
@@ -35,7 +37,7 @@ public class RenderedArea {
 
     public int leftColumnIndex() {
         if (isNearRightSide()) {
-            return BattleFieldMap.width() - SQUARES_IN_COLUMNS;
+            return battleFieldMap.width() - SQUARES_IN_COLUMNS;
         }
         if (isNearLeftSide()) {
             return 0;
@@ -45,7 +47,7 @@ public class RenderedArea {
 
     public int upperRowIndex() {
         if (isNearBottom()) {
-            return BattleFieldMap.heigth() - SQUARES_IN_ROWS;
+            return battleFieldMap.height() - SQUARES_IN_ROWS;
         }
         if (isNearUpperRow()) {
             return 0;
@@ -74,11 +76,11 @@ public class RenderedArea {
     }
 
     private boolean isNearRightSide() {
-        return playerX > BattleFieldMap.width() - horisontalCenter() - 1;
+        return playerX > battleFieldMap.width() - horisontalCenter() - 1;
     }
 
     private boolean isNearBottom() {
-        return playerY > BattleFieldMap.heigth() - 1 - verticalCenter();
+        return playerY > battleFieldMap.height() - 1 - verticalCenter();
     }
 
     private boolean isNearUpperRow() {
