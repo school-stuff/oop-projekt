@@ -20,7 +20,7 @@ public class BattleFieldMap {
         return SquareTypes.getSquare(battleFieldArray[y][x]).canGoTo();
     }
 
-    public static int heigth() {
+    public static int height() {
         return VERTICAL_LENGTH;
     }
 

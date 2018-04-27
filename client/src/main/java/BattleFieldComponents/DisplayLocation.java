@@ -47,7 +47,7 @@ public class DisplayLocation {
 
     public int upperRowIndex() {
         if (isNearBottom()) {
-            return BattleFieldMap.heigth() - SQUARES_IN_ROWS;
+            return BattleFieldMap.height() - SQUARES_IN_ROWS;
         }
         if (isNearUpperRow()) {
             return 0;
@@ -80,7 +80,7 @@ public class DisplayLocation {
     }
 
     private boolean isNearBottom() {
-        return userFullMapY > BattleFieldMap.heigth() - 1 - verticalCenter();
+        return userFullMapY > BattleFieldMap.height() - 1 - verticalCenter();
     }
 
     private boolean isNearUpperRow() {
