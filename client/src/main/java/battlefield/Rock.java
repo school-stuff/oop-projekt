@@ -1,6 +1,4 @@
-package BattleFieldComponents;
-
-import Scenes.BattleFieldScene;
+package battlefield;
 
 public class Rock extends BattleFieldSquare {
 

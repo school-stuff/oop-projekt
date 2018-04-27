@@ -1,4 +1,4 @@
-package BattleFieldComponents;
+package battlefield;
 
 public class RenderedArea {
     private static final int SQUARES_IN_ROWS = 11;

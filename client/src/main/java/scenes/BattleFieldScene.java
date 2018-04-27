@@ -1,7 +1,7 @@
-package Scenes;
+package scenes;
 
 
-import BattleFieldComponents.*;
+import battlefield.*;
 import io.reactivex.Observable;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;

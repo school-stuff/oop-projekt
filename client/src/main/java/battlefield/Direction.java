@@ -1,4 +1,4 @@
-package BattleFieldComponents;
+package battlefield;
 
 import javafx.scene.input.KeyCode;
 

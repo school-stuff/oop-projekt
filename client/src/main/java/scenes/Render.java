@@ -1,8 +1,7 @@
-package Scenes;
+package scenes;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 

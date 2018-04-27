@@ -1,4 +1,4 @@
-package BattleFieldComponents;
+package battlefield;
 
 import java.util.HashMap;
 import java.util.Map;
