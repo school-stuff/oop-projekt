@@ -45,7 +45,6 @@ public class BattleFieldScene extends JPanel {
                         }
                     }
                 }
-                showMapNodes();
             }
         });
     }
