@@ -14,7 +14,7 @@ import services.GameService;
 
 public class BattleFieldScene {
     private static int[][] map;
-    private DisplayLocation userLocation;
+    private RenderedArea userLocation;
     private GridPane gridPane;
 
     public BattleFieldScene() {
@@ -52,7 +52,7 @@ public class BattleFieldScene {
     private void createObserver() {
         Observable<int[]> userLocationObservable = GameService.getInstance().getCharacterLocation();
         userLocationObservable.subscribe(data -> {
-            userLocation = new DisplayLocation(data[0], data[1]);
+            userLocation = new RenderedArea(data[0], data[1]);
             showMapNodes();
         });
     }

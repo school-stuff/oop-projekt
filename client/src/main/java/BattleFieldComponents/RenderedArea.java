@@ -1,6 +1,6 @@
 package BattleFieldComponents;
 
-public class DisplayLocation {
+public class RenderedArea {
     private static final int SQUARES_IN_ROWS = 11;
     private static final int SQUARES_IN_COLUMNS = 11;
 
@@ -8,7 +8,7 @@ public class DisplayLocation {
     private final int userFullMapY;
     private final boolean userInTheMiddle;
 
-    public DisplayLocation(int userFullMapX, int userFullMapY) {
+    public RenderedArea(int userFullMapX, int userFullMapY) {
         this.userFullMapX = userFullMapX;
         this.userFullMapY = userFullMapY;
         userInTheMiddle = isUserInTheMiddle();
