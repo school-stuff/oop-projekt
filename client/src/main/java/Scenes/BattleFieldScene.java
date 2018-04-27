@@ -12,7 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
 
-public class BattleFieldScene extends JPanel {
+public class BattleFieldScene {
     private static int[][] map;
     private DisplayLocation userLocation;
     private GridPane gridPane;

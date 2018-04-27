@@ -1,3 +1,4 @@
+import Scenes.Render;
 import javafx.application.Application;
 
 public class Client {
