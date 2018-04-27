@@ -1,30 +1,31 @@
-package BattleFieldComponents;
+package battlefield;
 
-import Scenes.BattleFieldScene;
+import enums.SquareTypes;
 
 public class BattleFieldMap {
-    private final static int VERTICAL_LENGTH = Map.getMapHeight();
-    private final static int HORISONTAL_LENGTH = Map.getMapWidth();
-    private final static int[][] battleFieldArray = Map.getMap();
 
     public BattleFieldMap() { }
 
     public int[][] getBattleFieldArray() {
-        return battleFieldArray;
+        return Maps.map;
     }
 
-    public static boolean canGoToSquare(int x, int y) {
-        if (x < 0 || y < 0 || x > battleFieldArray[0].length - 1 || y > battleFieldArray.length - 1){
+    public boolean canGoToSquare(int x, int y) {
+        if (x < 0 || y < 0 || x > Maps.map[0].length - 1 || y > Maps.map.length - 1){
             return false;
         }
-        return SquareTypes.getSquare(battleFieldArray[y][x]).canGoTo();
+        return SquareTypes.getSquare(Maps.map[y][x]).canGoTo();
     }
 
-    public static int height() {
-        return VERTICAL_LENGTH;
+    public int height() {
+        return Maps.map.length;
     }
 
-    public static int width() {
-        return HORISONTAL_LENGTH;
+    public int width() {
+        return Maps.map[0].length;
+    }
+
+    public void setMap(int coordinateX, int coordinateY, int squareType) {
+        Maps.map[coordinateY][coordinateX] = squareType;
     }
 }
