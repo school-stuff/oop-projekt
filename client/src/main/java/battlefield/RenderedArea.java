@@ -1,34 +1,36 @@
-package battlefield;
+package BattleFieldComponents;
 
-public class RenderedArea {
+public class DisplayLocation {
     private static final int SQUARES_IN_ROWS = 11;
     private static final int SQUARES_IN_COLUMNS = 11;
 
-    private final int playerX;
-    private final int playerY;
+    private final int userFullMapX;
+    private final int userFullMapY;
+    private final boolean userInTheMiddle;
 
-    public RenderedArea(int playerX, int playerY) {
-        this.playerX = playerX;
-        this.playerY = playerY;
+    public DisplayLocation(int userFullMapX, int userFullMapY) {
+        this.userFullMapX = userFullMapX;
+        this.userFullMapY = userFullMapY;
+        userInTheMiddle = isUserInTheMiddle();
     }
 
-    public int renderedX() {
+    public int userX() {
         if (isNearRightSide()) {
-            return playerX - leftColumnIndex();
+            return userFullMapX - leftColumnIndex();
 
         }
         if (isNearLeftSide()) {
-            return playerX;
+            return userFullMapX;
         }
         return horisontalCenter();
     }
 
-    public int renderedY() {
+    public int userY() {
         if (isNearBottom()) {
-            return playerY - upperRowIndex();
+            return userFullMapY - upperRowIndex();
         }
         if (isNearUpperRow()) {
-            return playerY;
+            return userFullMapY;
         }
         return verticalCenter();
     }
@@ -40,17 +42,17 @@ public class RenderedArea {
         if (isNearLeftSide()) {
             return 0;
         }
-        return playerX - horisontalCenter();
+        return userFullMapX - horisontalCenter();
     }
 
     public int upperRowIndex() {
         if (isNearBottom()) {
-            return BattleFieldMap.heigth() - SQUARES_IN_ROWS;
+            return BattleFieldMap.height() - SQUARES_IN_ROWS;
         }
         if (isNearUpperRow()) {
             return 0;
         }
-        return playerY - verticalCenter();
+        return userFullMapY - verticalCenter();
     }
 
     public int squaresInRow() {
@@ -61,28 +63,32 @@ public class RenderedArea {
         return SQUARES_IN_COLUMNS;
     }
 
-    public int getPlayerX() {
-        return playerX;
+    public int getUserFullMapX() {
+        return userFullMapX;
     }
 
-    public int getPlayerY() {
-        return playerY;
+    public int getUserFullMapY() {
+        return userFullMapY;
     }
 
     private boolean isNearLeftSide() {
-        return playerX < horisontalCenter();
+        return userFullMapX < horisontalCenter();
     }
 
     private boolean isNearRightSide() {
-        return playerX > BattleFieldMap.width() - horisontalCenter() - 1;
+        return userFullMapX > BattleFieldMap.width() - horisontalCenter() - 1;
     }
 
     private boolean isNearBottom() {
-        return playerY > BattleFieldMap.heigth() - 1 - verticalCenter();
+        return userFullMapY > BattleFieldMap.height() - 1 - verticalCenter();
     }
 
     private boolean isNearUpperRow() {
-        return playerY < verticalCenter();
+        return userFullMapY < verticalCenter();
+    }
+
+    private boolean isUserInTheMiddle() {
+        return !isNearBottom() && !isNearUpperRow() && !isNearRightSide() && !isNearLeftSide();
     }
 
     private int verticalCenter() {
