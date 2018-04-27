@@ -37,7 +37,6 @@ public class Render extends Application {
 
         new LoginAndRegisterScene();
         primaryStage.show();
-        new BattleFieldScene();
     }
 
     public void showScene(Scene scene) {
