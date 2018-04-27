@@ -13,7 +13,7 @@ import javafx.scene.paint.Color;
 import services.GameService;
 
 public class BattleFieldScene extends JPanel {
-    private static char[][] map;
+    private static int[][] map;
     private DisplayLocation userLocation;
     private GridPane gridPane;
 
@@ -45,6 +45,7 @@ public class BattleFieldScene extends JPanel {
                         }
                     }
                 }
+                showMapNodes();
             }
         });
     }
