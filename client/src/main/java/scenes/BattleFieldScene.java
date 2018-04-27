@@ -40,8 +40,8 @@ public class BattleFieldScene {
                 System.out.println("Key pressed: " + event.getCode().getName());
                 for (Direction direction : Direction.values()) {
                     if (direction.getKeyCode() == event.getCode()){
-                        int newX = userLocation.getUserFullMapX() + direction.getX();
-                        int newY = userLocation.getUserFullMapY() + direction.getY();
+                        int newX = userLocation.getPlayerX() + direction.getX();
+                        int newY = userLocation.getPlayerY() + direction.getY();
                         if (BattleFieldMap.canGoToSquare(newX, newY)) {
                             // send server info
                         }
@@ -84,6 +84,6 @@ public class BattleFieldScene {
         ImageView imageView = new ImageView(ImageOpener.getCharacterImage());
         imageView.setFitWidth(50);
         imageView.setFitHeight(50);
-        gridPane.add(imageView, userLocation.userX(), userLocation.userY());
+        gridPane.add(imageView, userLocation.renderedX(), userLocation.renderedY());
     }
 }
