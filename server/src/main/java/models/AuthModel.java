@@ -43,13 +43,14 @@ public class AuthModel {
         return subject;
     }
 
-    public Observable<Object> register() {
-        ReplaySubject<Object> subject = ReplaySubject.create(1);
+    public Observable<Auth.RegisterData> register() {
+        ReplaySubject<Auth.RegisterData> subject = ReplaySubject.create(1);
 
         queryHandler.register().subscribe(
             data -> {
-                handleRegister((Auth.RegisterData) data);
-                subject.onNext(true);
+                Auth.RegisterData result = (Auth.RegisterData) data;
+                handleRegister(result);
+                subject.onNext(result);
                 subject.onComplete();
             },
             errors -> {
@@ -72,7 +73,7 @@ public class AuthModel {
             ResultSet resultSet = statement.executeQuery();
             resultSet.next();
 
-            if (saltedPassword(password).equals(resultSet.getString("password"))) {
+            if (checkPassword(password, (resultSet.getString("password")))) {
                 data = Auth.AuthResponse.newBuilder()
                         .setMessage(Auth.AuthResponse.MessageType.Success)
                         .build();
@@ -110,10 +111,13 @@ public class AuthModel {
             data = Auth.AuthResponse.newBuilder()
                     .setMessage(Auth.AuthResponse.MessageType.Error)
                     .build();
-            return;
         } finally {
             queryHandler.sendData("update", "registerSuccess", data);
         }
+    }
+
+    private boolean checkPassword(String password, String hashed) {
+        return BCrypt.checkpw(password, hashed);
     }
 
     private String saltedPassword(String password) {

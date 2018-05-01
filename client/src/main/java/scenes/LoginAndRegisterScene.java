@@ -104,11 +104,11 @@ public class LoginAndRegisterScene {
         infoLabel.setText("Register in process...");
         loginService.createUser(emailField.getText(), passwordField.getText()).subscribe(isSuccess -> {
             if (isSuccess) {
-                infoLabel.setText("Account created!");
+                displayWaitingQueue();
             } else {
                 infoLabel.setText("Account could not be created!");
+                formSetDisable(false);
             }
-            formSetDisable(false);
         });
     }
 

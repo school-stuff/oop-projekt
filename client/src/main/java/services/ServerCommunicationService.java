@@ -63,6 +63,8 @@ public class ServerCommunicationService {
     }
 
     private void pingServer() {
+        // Do once for linear connection
+        isConnected.onNext(socketTryConnect());
         new Thread(() -> {
             while (true) {
                 isConnected.onNext(socketTryConnect());
