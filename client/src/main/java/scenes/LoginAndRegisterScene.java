@@ -87,12 +87,14 @@ public class LoginAndRegisterScene {
         formSetDisable(true);
         infoLabel.setText("Logging in...");
         loginService.authenticateUser(emailField.getText(), passwordField.getText()).subscribe(isSuccess -> {
-            if (isSuccess) {
-                displayWaitingQueue();
-            } else {
-                infoLabel.setText("Unknown email or password!");
-                formSetDisable(false);
-            }
+            Platform.runLater(() -> {
+                if (isSuccess) {
+                    displayWaitingQueue();
+                } else {
+                    infoLabel.setText("Unknown email or password!");
+                    formSetDisable(false);
+                }
+            });
         });
     }
 
@@ -103,12 +105,14 @@ public class LoginAndRegisterScene {
         formSetDisable(true);
         infoLabel.setText("Register in process...");
         loginService.createUser(emailField.getText(), passwordField.getText()).subscribe(isSuccess -> {
-            if (isSuccess) {
-                displayWaitingQueue();
-            } else {
-                infoLabel.setText("Account could not be created!");
-                formSetDisable(false);
-            }
+            Platform.runLater(() -> {
+                if (isSuccess) {
+                    displayWaitingQueue();
+                } else {
+                    infoLabel.setText("Account could not be created!");
+                    formSetDisable(false);
+                }
+            });
         });
     }
 
