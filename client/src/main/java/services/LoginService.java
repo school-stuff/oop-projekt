@@ -36,6 +36,7 @@ public class LoginService {
             } else if (response.getMessage() == Auth.AuthResponse.MessageType.Success) {
                 subject.onNext(true);
             }
+            subject.onComplete();
         });
 
         return subject;
@@ -59,6 +60,7 @@ public class LoginService {
             } else if (response.getMessage() == Auth.AuthResponse.MessageType.Success) {
                 subject.onNext(true);
             }
+            subject.onComplete();
         });
 
         return subject;
