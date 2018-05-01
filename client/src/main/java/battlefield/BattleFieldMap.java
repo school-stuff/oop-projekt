@@ -10,7 +10,7 @@ public class BattleFieldMap {
         return Maps.map;
     }
 
-    public boolean canGoToSquare(int x, int y) {
+    public static boolean canGoToSquare(int x, int y) {
         if (x < 0 || y < 0 || x > Maps.map[0].length - 1 || y > Maps.map.length - 1){
             return false;
         }
