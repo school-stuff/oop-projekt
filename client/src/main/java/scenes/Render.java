@@ -24,7 +24,7 @@ public class Render extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException, InterruptedException {
         this.primaryStage = primaryStage;
-        primaryStage.setHeight(575);
+        primaryStage.setHeight(640);
         primaryStage.setWidth(575);
         primaryStage.setResizable(false);
         primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {

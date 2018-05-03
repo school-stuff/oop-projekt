@@ -1,0 +1,10 @@
+syntax = 'proto3';
+
+package shared.match.player;
+
+message HealthData {
+    int32 Health = 1;
+    int32 Armor = 2;
+}
+
+message Filters {}

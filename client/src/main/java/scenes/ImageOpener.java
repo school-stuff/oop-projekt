@@ -1,4 +1,4 @@
-package battlefield;
+package scenes;
 
 import javafx.scene.image.Image;
 
@@ -10,6 +10,10 @@ public class ImageOpener {
     private static Image characterImage;
     private static Image waterImage;
     private static Image wallImage;
+    private static Image swordImage;
+    private static Image pickaxeImage;
+    private static Image potionImage;
+    private static Image shieldImage;
 
     public static Image getCharacterImage() {
         if (characterImage == null) {
@@ -44,6 +48,34 @@ public class ImageOpener {
             wallImage = getImageFromFile("client/src/main/resources/images/wall.png");
         }
         return wallImage;
+    }
+
+    public static Image getSwordImage() {
+        if (swordImage == null) {
+            swordImage = getImageFromFile(""); //TODO find image
+        }
+        return swordImage;
+    }
+
+    public static Image getPickaxeImage() {
+        if (pickaxeImage == null) {
+            pickaxeImage = getImageFromFile(""); //TODO find image
+        }
+        return pickaxeImage;
+    }
+
+    public static Image getPotionImage() {
+        if (potionImage == null) {
+            potionImage = getImageFromFile(""); //TODO find image
+        }
+        return potionImage;
+    }
+
+    public static Image getShieldImage() {
+        if (shieldImage == null) {
+            shieldImage = getImageFromFile(""); //TODO find image
+        }
+        return shieldImage;
     }
 
     private static Image getImageFromFile(String file) {

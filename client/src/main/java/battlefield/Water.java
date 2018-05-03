@@ -1,5 +1,7 @@
 package battlefield;
 
+import scenes.ImageOpener;
+
 public class Water extends BattleFieldSquare{
     public Water()  {
         super();
