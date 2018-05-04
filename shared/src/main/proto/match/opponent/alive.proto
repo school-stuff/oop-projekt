@@ -1,0 +1,7 @@
+syntax = 'proto3';
+
+package shared.match.opponent;
+
+message AliveData {
+    int32 playersAlive = 1;
+}

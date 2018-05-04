@@ -1,5 +1,7 @@
 package battlefield;
 
+import scenes.ImageOpener;
+
 public class Wall extends BattleFieldSquare{
     public Wall() {
         super();

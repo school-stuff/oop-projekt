@@ -1,0 +1,17 @@
+syntax = 'proto3';
+
+package shared.match.player;
+
+message InventoryData {
+    int32 numberOfItems = 1;
+    InInventory items = 2;
+}
+
+message InInventory {
+    int32 firstItemId = 1;
+    int32 secondItemId = 2;
+    int32 thirdItemId = 3;
+    int32 fourthItemId = 4;
+    int32 fifthItemId = 5;
+    int32 sixthItemId = 6;
+}

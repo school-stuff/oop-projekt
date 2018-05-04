@@ -1,5 +1,7 @@
 package battlefield;
 
+import scenes.ImageOpener;
+
 public class Rock extends BattleFieldSquare {
 
     public Rock()  {

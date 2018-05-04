@@ -3,33 +3,44 @@ package scenes;
 
 import battlefield.*;
 import enums.Direction;
+import enums.InventorySelection;
+import enums.KeyPress;
 import enums.SquareTypes;
+import game.Player;
 import io.reactivex.Observable;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class BattleFieldScene {
     private static int[][] map;
-    private RenderedArea userLocation;
+    private RenderedArea userLocation = new RenderedArea(1, 1);
     private GridPane gridPane;
+    private HUD hud;
+    private BorderPane borderPane;
+
 
     public BattleFieldScene() {
         map = new BattleFieldMap().getBattleFieldArray();
         Render render = Render.getInstance();
-        createGridPane();
+        createView();
         showScene(render);
         addKeyEventHandler(render);
-        createObserver();
+        showMapNodes();
+        // createObserver();
     }
 
     private void showScene(Render render) {
-        Scene battleFieldScene = new Scene(gridPane, Color.BLACK);
+        Scene battleFieldScene = new Scene(borderPane, Color.BLACK);
         render.showScene(battleFieldScene);
     }
 
@@ -38,12 +49,23 @@ public class BattleFieldScene {
             @Override
             public void handle(KeyEvent event) {
                 System.out.println("Key pressed: " + event.getCode().getName());
-                for (Direction direction : Direction.values()) {
-                    if (direction.getKeyCode() == event.getCode()){
-                        int newX = userLocation.getPlayerX() + direction.getX();
-                        int newY = userLocation.getPlayerY() + direction.getY();
-                        if (BattleFieldMap.canGoToSquare(newX, newY)) {
-                            // send server info
+                ArrayList<KeyPress> keyPresses = new ArrayList<>();
+                keyPresses.addAll(Arrays.asList(Direction.values()));
+                keyPresses.addAll(Arrays.asList(InventorySelection.values()));
+                for (KeyPress keyPress : keyPresses) {
+                    if (keyPress.getKeyCode() == event.getCode()) {
+                        if (keyPress.getClass() == Direction.class) {
+                            Direction direction = (Direction) keyPress;
+                            int newX = userLocation.getPlayerX() + direction.getX();
+                            int newY = userLocation.getPlayerY() + direction.getY();
+                            if (BattleFieldMap.canGoToSquare(newX, newY)) {
+                                // send server info
+                            }
+                            break;
+                        }
+                        if (keyPress.getClass() == InventorySelection.class) {
+                            InventorySelection inventorySelection = (InventorySelection) keyPress;
+                            Player.slotEquipped.onNext(inventorySelection.getValue());
                         }
                     }
                 }
@@ -59,8 +81,17 @@ public class BattleFieldScene {
         });
     }
 
+    private void createView() {
+        borderPane = new BorderPane();
+        createGridPane();
+        hud = new HUD();
+        borderPane.setTop(gridPane);
+        borderPane.setBottom(hud.getGridPane());
+    }
+
     private void createGridPane() {
         GridPane gridPane = new GridPane();
+        gridPane.setStyle("-fx-background-color: #222222;");
         gridPane.setVgap(1);
         gridPane.setHgap(1);
 

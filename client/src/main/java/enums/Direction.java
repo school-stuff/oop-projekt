@@ -2,7 +2,7 @@ package enums;
 
 import javafx.scene.input.KeyCode;
 
-public enum Direction {
+public enum Direction implements KeyPress {
     UP(0, -1, KeyCode.UP), DOWN(0, 1, KeyCode.DOWN), LEFT(-1, 0, KeyCode.LEFT), RIGHT(1, 0, KeyCode.RIGHT);
 
     private int X;
