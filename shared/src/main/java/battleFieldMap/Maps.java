@@ -1,4 +1,4 @@
-package battlefield;
+package battleFieldMap;
 
 public class Maps {
     public static int[][] map =

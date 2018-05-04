@@ -2,6 +2,8 @@ package battlefield;
 
 import enums.SquareTypes;
 
+import battleFieldMap.Maps;
+
 public class BattleFieldMap {
 
     public BattleFieldMap() { }
