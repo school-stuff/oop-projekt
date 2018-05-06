@@ -4,6 +4,7 @@ import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
 import shared.errors.UnknownMessage;
+import shared.match.location.Location;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
 
@@ -64,6 +65,10 @@ public class QueryHandler {
 
     public Observable<AbstractMessage> register() {
         return createMutation("register");
+    }
+
+    public Observable<AbstractMessage> getPlayerLocation() {
+        return createWatchQuery("matchLocation");
     }
 
     public void sendData(String type, String message, AbstractMessage data) {
@@ -175,6 +180,8 @@ public class QueryHandler {
             case "matchQueue":
                 updateWatchQueryData(messageName, Queue.Filters.parseDelimitedFrom(getInputStream()));
                 break;
+            case "matchLocation":
+                updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
             default:
                 handleUnknownMessage();
                 break;

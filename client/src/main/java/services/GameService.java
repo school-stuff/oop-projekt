@@ -65,4 +65,8 @@ public class GameService {
             Player.opponentsAlive.onNext(result.getPlayersAlive());
         });
     }
+
+    public void sendLocationRequest(Location.UserLocation location) throws IOException {
+        server.sendData("?", "?", location);
+    }
 }

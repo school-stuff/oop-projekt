@@ -17,7 +17,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
+import shared.match.location.Location;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -35,8 +37,7 @@ public class BattleFieldScene {
         createView();
         showScene(render);
         addKeyEventHandler(render);
-        showMapNodes();
-        // createObserver();
+        createObserver();
     }
 
     private void showScene(Render render) {
@@ -59,7 +60,11 @@ public class BattleFieldScene {
                             int newX = userLocation.getPlayerX() + direction.getX();
                             int newY = userLocation.getPlayerY() + direction.getY();
                             if (BattleFieldMap.canGoToSquare(newX, newY)) {
-                                // send server info
+                                try {
+                                    GameService.getInstance().sendLocationRequest(Location.UserLocation.newBuilder().setX(newX).setY(newY).build());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                };
                             }
                             break;
                         }
