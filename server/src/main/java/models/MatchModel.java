@@ -16,8 +16,7 @@ public class MatchModel {
 
     private void sendPlayerLocation(Location.UserLocation location) {
         if (canGoTo()) {
-            queryHandler.sendData("?", "?", location);
-            //TODO: messageType and message
+            queryHandler.sendData("watchUpdate", "matchLocation", location);
         }
     }
 
