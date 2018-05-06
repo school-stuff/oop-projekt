@@ -36,7 +36,7 @@ public class MatchModel {
     }
 
     private Location.UserLocation getRandomLocation() {
-        return Location.UserLocation.newBuilder().setX((int) (Math.random() * Maps.map[0].length)).setY((int) (Math.random() * Maps.map.length)).build();
+        return Location.UserLocation.newBuilder().setX((int) Math.round(Math.random() * Maps.map[0].length)).setY((int) Math.round(Math.random() * Maps.map.length)).build();
     }
 
     private boolean canGoTo() {

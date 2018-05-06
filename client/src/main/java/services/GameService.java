@@ -36,9 +36,11 @@ public class GameService {
 
         server.watchData("matchLocation").subscribe(data -> {
             int[] location = new int[2];
-            Location.LocationData result = (Location.LocationData) data;
-            location[0] = result.getUserLocation().getX();
-            location[1] = result.getUserLocation().getY();
+            Location.UserLocation result = (Location.UserLocation) data;
+            location[0] = result.getX();
+            location[1] = result.getY();
+            System.out.println(location[0]);
+            System.out.println(location[1]);
             locationReplaySubject.onNext(location);
         });
 
