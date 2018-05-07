@@ -3,28 +3,24 @@ package models;
 import battleFieldMap.Maps;
 import services.QueryHandler;
 import shared.match.location.Location;
+import shared.user.auth.Auth;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class MatchModel {
-    private final QueryHandler queryHandler;
+    private final List<Player> players;
 
-    public MatchModel(QueryHandler queryHandler) {
-        this.queryHandler = queryHandler;
-        subscribeToLocationRequests();
-        sendPlayerLocation(generateFirstLocation());
-    }
-
-
-    private void sendPlayerLocation(Location.UserLocation location) {
-        if (canGoTo()) {
-            queryHandler.sendData("watchUpdate", "matchLocation", location);
+    public MatchModel(Map<Auth.LoginData, QueryHandler> clients) {
+        players = new ArrayList<>();
+        for (QueryHandler queryHandler : clients.values()) {
+            players.add(new Player(queryHandler));
         }
-    }
-
-    private void subscribeToLocationRequests() {
-        queryHandler.getPlayerLocation().subscribe(data -> {
-            Location.UserLocation location = (Location.UserLocation) data;
-            sendPlayerLocation(location);
-        });
+        for (Player player : players) {
+            player.sendPlayerLocation(generateFirstLocation());
+            player.subscribeToLocationRequests();
+        }
     }
 
     private Location.UserLocation generateFirstLocation() {
@@ -42,5 +38,30 @@ public class MatchModel {
     private boolean canGoTo() {
         //TODO: method body
         return true;
+    }
+
+    private class Player {
+        private QueryHandler playerSocket;
+
+        public Player(QueryHandler playerSocket) {
+            this.playerSocket = playerSocket;
+        }
+
+        public QueryHandler getPlayerSocket() {
+            return playerSocket;
+        }
+
+        public void sendPlayerLocation(Location.UserLocation location) {
+            if (canGoTo()) {
+                playerSocket.sendData("watchUpdate", "matchLocation", location);
+            }
+        }
+
+        public void subscribeToLocationRequests() {
+            playerSocket.getPlayerLocation().subscribe(data -> {
+                Location.UserLocation location = (Location.UserLocation) data;
+                sendPlayerLocation(location);
+            });
+        }
     }
 }

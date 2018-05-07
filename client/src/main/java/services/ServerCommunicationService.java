@@ -4,6 +4,7 @@ import com.google.protobuf.AbstractMessage;
 import com.google.protobuf.DescriptorProtos;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import javafx.application.Platform;
 import shared.match.location.Location;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
