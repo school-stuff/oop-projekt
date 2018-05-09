@@ -29,7 +29,7 @@ public class GameService {
 
     private void getServerConnection() {
         try {
-            server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
+            server.sendData("watchQuery", "matchLocation", Location.UserLocation.newBuilder().build());
         } catch (IOException e) {
             // TODO: error handling
         }
@@ -39,8 +39,6 @@ public class GameService {
             Location.UserLocation result = (Location.UserLocation) data;
             location[0] = result.getX();
             location[1] = result.getY();
-            System.out.println(location[0]);
-            System.out.println(location[1]);
             locationReplaySubject.onNext(location);
         });
 
@@ -69,6 +67,7 @@ public class GameService {
     }
 
     public void sendLocationRequest(Location.UserLocation location) throws IOException {
-        server.sendData("?", "?", location);
+        System.out.println("sending data");
+        server.sendData("watchQuery", "matchLocation", location);
     }
 }

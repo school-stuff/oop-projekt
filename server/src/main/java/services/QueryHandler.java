@@ -27,11 +27,12 @@ public class QueryHandler {
 
         new Thread(() -> {
             try (
-                DataInputStream inputStream = new DataInputStream(socket.getInputStream())
+                    DataInputStream inputStream = new DataInputStream(socket.getInputStream())
             ) {
                 while (true) {
                     String messageType = inputStream.readUTF();
                     String messageName = inputStream.readUTF();
+
 
                     switch (messageType) {
                         case "query":
@@ -68,6 +69,11 @@ public class QueryHandler {
     }
 
     public Observable<AbstractMessage> getPlayerLocation() {
+        for (String watchQueryName : watchQueryList.keySet()) {
+            if (watchQueryName.equals("matchLocation")) {
+                return watchQueryList.get(watchQueryName);
+            }
+        }
         return createWatchQuery("matchLocation");
     }
 
@@ -107,12 +113,8 @@ public class QueryHandler {
     private ReplaySubject<AbstractMessage> createWatchQuery(String queryName) {
         ReplaySubject<AbstractMessage> query = watchQueryList.get(queryName);
         if (query == null) {
-            queryList.put(queryName, ReplaySubject.create(1));
+            watchQueryList.put(queryName, ReplaySubject.create(1));
             query = queryList.get(queryName);
-
-            query.subscribe(data -> {
-                sendData("watchUpdate", queryName, data);
-            });
         }
         return query;
     }
@@ -191,8 +193,8 @@ public class QueryHandler {
     private void handleUnknownMessage() {
         // TODO: tell if message type or query name was invalid
         UnknownMessage.MessageTypeError errorMessage = UnknownMessage.MessageTypeError.newBuilder()
-            .setMessage(UnknownMessage.MessageTypeError.ErrorType.UnknownProperty)
-            .build();
+                .setMessage(UnknownMessage.MessageTypeError.ErrorType.UnknownProperty)
+                .build();
         // TODO: sent error to client
     }
 
@@ -206,6 +208,12 @@ public class QueryHandler {
     }
 
     private void updateWatchQueryData(String queryName, AbstractMessage data) {
-        createWatchQuery(queryName).onNext(data);
+        while (true) {
+            if (watchQueryList.containsKey(queryName)) {
+                watchQueryList.get(queryName).onNext(data);
+                return;
+            }
+            createWatchQuery(queryName);
+        }
     }
 }

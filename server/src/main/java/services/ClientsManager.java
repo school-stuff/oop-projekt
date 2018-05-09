@@ -1,6 +1,7 @@
 package services;
 
 import models.ClientModel;
+import models.MatchModel;
 import org.flywaydb.core.Flyway;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
@@ -40,11 +41,14 @@ public class ClientsManager {
     }
 
     private void handleNewClient(Socket socket) {
+        clients.put(Auth.LoginData.newBuilder().build(), new QueryHandler(socket));
+        new MatchModel(clients);
         ClientModel client = new ClientModel(socket);
 
         client.authenticate().subscribe(user -> {
             clients.put(user, new QueryHandler(socket));
             updateClientsQueue();
+
         });
     }
 

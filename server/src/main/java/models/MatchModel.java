@@ -1,6 +1,7 @@
 package models;
 
 import battleFieldMap.Maps;
+import match.Player;
 import services.QueryHandler;
 import shared.match.location.Location;
 import shared.user.auth.Auth;
@@ -35,33 +36,8 @@ public class MatchModel {
         return Location.UserLocation.newBuilder().setX((int) Math.round(Math.random() * Maps.map[0].length)).setY((int) Math.round(Math.random() * Maps.map.length)).build();
     }
 
-    private boolean canGoTo() {
+    public static boolean canGoTo() {
         //TODO: method body
         return true;
-    }
-
-    private class Player {
-        private QueryHandler playerSocket;
-
-        public Player(QueryHandler playerSocket) {
-            this.playerSocket = playerSocket;
-        }
-
-        public QueryHandler getPlayerSocket() {
-            return playerSocket;
-        }
-
-        public void sendPlayerLocation(Location.UserLocation location) {
-            if (canGoTo()) {
-                playerSocket.sendData("watchUpdate", "matchLocation", location);
-            }
-        }
-
-        public void subscribeToLocationRequests() {
-            playerSocket.getPlayerLocation().subscribe(data -> {
-                Location.UserLocation location = (Location.UserLocation) data;
-                sendPlayerLocation(location);
-            });
-        }
     }
 }

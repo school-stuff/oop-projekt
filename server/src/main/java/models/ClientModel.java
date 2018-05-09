@@ -30,8 +30,7 @@ public class ClientModel {
                 Auth.LoginData.newBuilder()
                     .setEmail(data.getEmail())
                     .setPassword(data.getPassword())
-                    .build()
-            );
+                    .build());
             subject.onComplete();
         });
 
