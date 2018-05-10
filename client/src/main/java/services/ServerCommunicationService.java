@@ -93,6 +93,7 @@ public class ServerCommunicationService {
     }
 
     public void sendData(String requestType, String requestName, AbstractMessage data) throws IOException {
+        System.out.println("writing data");
         getDataOutput().writeUTF(requestType);
         getDataOutput().writeUTF(requestName);
         data.writeDelimitedTo(getOutput());

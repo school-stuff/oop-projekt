@@ -64,7 +64,7 @@ public class BattleFieldScene {
                                     GameService.getInstance().sendLocationRequest(Location.UserLocation.newBuilder().setX(newX).setY(newY).build());
                                 } catch (IOException e) {
                                     e.printStackTrace();
-                                };
+                                }
                             }
                             break;
                         }

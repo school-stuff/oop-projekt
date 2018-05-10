@@ -3,6 +3,7 @@ package services;
 import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import match.Player;
 import shared.errors.UnknownMessage;
 import shared.match.location.Location;
 import shared.match.queue.Queue;
@@ -12,6 +13,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class QueryHandler {
     private Socket socket;
@@ -45,6 +47,7 @@ public class QueryHandler {
                             handleMutation(messageName);
                             break;
                         default:
+                            System.out.println(messageName);
                             handleUnknownMessage();
                             break;
                     }
@@ -84,7 +87,7 @@ public class QueryHandler {
             outputStream.writeUTF(message);
             data.writeDelimitedTo(outputStream);
         } catch (IOException e) {
-            // TODO: handle
+            throw new RuntimeException("Data not sent to client, exeption description :" + e);
         }
     }
 
@@ -113,8 +116,8 @@ public class QueryHandler {
     private ReplaySubject<AbstractMessage> createWatchQuery(String queryName) {
         ReplaySubject<AbstractMessage> query = watchQueryList.get(queryName);
         if (query == null) {
-            watchQueryList.put(queryName, ReplaySubject.create(1));
-            query = queryList.get(queryName);
+            watchQueryList.put(queryName, ReplaySubject.create());
+            query = watchQueryList.get(queryName);
         }
         return query;
     }
@@ -183,7 +186,9 @@ public class QueryHandler {
                 updateWatchQueryData(messageName, Queue.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             case "matchLocation":
-                updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
+                System.out.println("got new location");
+                Player.sendPlayerLocation(Location.UserLocation.parseDelimitedFrom(getInputStream()), this);
+                //updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
             default:
                 handleUnknownMessage();
                 break;
@@ -210,7 +215,8 @@ public class QueryHandler {
     private void updateWatchQueryData(String queryName, AbstractMessage data) {
         while (true) {
             if (watchQueryList.containsKey(queryName)) {
-                watchQueryList.get(queryName).onNext(data);
+                ReplaySubject<AbstractMessage> observable = watchQueryList.get(queryName);
+                if (data.isInitialized()) observable.onNext(data);
                 return;
             }
             createWatchQuery(queryName);

@@ -39,6 +39,7 @@ public class GameService {
             Location.UserLocation result = (Location.UserLocation) data;
             location[0] = result.getX();
             location[1] = result.getY();
+            System.out.println("got new location from server");
             locationReplaySubject.onNext(location);
         });
 

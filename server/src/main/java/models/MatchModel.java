@@ -19,8 +19,8 @@ public class MatchModel {
             players.add(new Player(queryHandler));
         }
         for (Player player : players) {
-            player.sendPlayerLocation(generateFirstLocation());
-            player.subscribeToLocationRequests();
+            player.sendPlayerLocation(generateFirstLocation(), player.getPlayerSocket());
+            //player.subscribeToLocationRequests();
         }
     }
 

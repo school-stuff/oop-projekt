@@ -15,16 +15,16 @@ public class Player {
             return playerSocket;
         }
 
-        public void sendPlayerLocation(Location.UserLocation location) {
+        public static void sendPlayerLocation(Location.UserLocation location, QueryHandler playerSocket) {
             if (MatchModel.canGoTo()) {
                 playerSocket.sendData("watchUpdate", "matchLocation", location);
             }
         }
 
-        public void subscribeToLocationRequests() {
-            playerSocket.getPlayerLocation().subscribe(data -> {
-                Location.UserLocation location = (Location.UserLocation) data;
-                sendPlayerLocation(location);
-            });
-        }
+        // public void subscribeToLocationRequests() {
+        //     playerSocket.getPlayerLocation().subscribe(data -> {
+        //         Location.UserLocation location = (Location.UserLocation) data;
+        //         //sendPlayerLocation(location);
+        //     });
+        // }
     }
