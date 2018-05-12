@@ -26,15 +26,18 @@ public class QueryHandler {
 
     public QueryHandler(Socket socket) {
         this.socket = socket;
+        clientCommunicationThread(socket);
+    }
 
+    private void clientCommunicationThread(Socket socket) {
         new Thread(() -> {
             try (
                     DataInputStream inputStream = new DataInputStream(socket.getInputStream())
             ) {
                 while (true) {
+
                     String messageType = inputStream.readUTF();
                     String messageName = inputStream.readUTF();
-
 
                     switch (messageType) {
                         case "query":
@@ -47,7 +50,6 @@ public class QueryHandler {
                             handleMutation(messageName);
                             break;
                         default:
-                            System.out.println(messageName);
                             handleUnknownMessage();
                             break;
                     }
@@ -186,9 +188,9 @@ public class QueryHandler {
                 updateWatchQueryData(messageName, Queue.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             case "matchLocation":
-                System.out.println("got new location");
                 Player.sendPlayerLocation(Location.UserLocation.parseDelimitedFrom(getInputStream()), this);
                 //updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
+                break;
             default:
                 handleUnknownMessage();
                 break;

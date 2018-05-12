@@ -8,6 +8,7 @@ import enums.KeyPress;
 import enums.SquareTypes;
 import game.Player;
 import io.reactivex.Observable;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -46,7 +47,7 @@ public class BattleFieldScene {
     }
 
     private void addKeyEventHandler(Render render) {
-        render.addEKeyEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        render.addEKeyEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 System.out.println("Key pressed: " + event.getCode().getName());
@@ -81,8 +82,10 @@ public class BattleFieldScene {
     private void createObserver() {
         Observable<int[]> userLocationObservable = GameService.getInstance().getCharacterLocation();
         userLocationObservable.subscribe(data -> {
-            userLocation = new RenderedArea(data[0], data[1]);
-            showMapNodes();
+            Platform.runLater(() -> {
+                userLocation = new RenderedArea(data[0], data[1]);
+                showMapNodes();
+            });
         });
     }
 
