@@ -20,7 +20,6 @@ public class MatchModel {
         }
         for (Player player : players) {
             player.sendPlayerLocation(generateFirstLocation(), player.getPlayerSocket());
-            //player.subscribeToLocationRequests();
         }
     }
 

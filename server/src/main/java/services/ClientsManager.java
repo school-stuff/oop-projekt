@@ -41,16 +41,13 @@ public class ClientsManager {
     }
 
     private void handleNewClient(Socket socket) {
-        clients.put(Auth.LoginData.newBuilder().build(), new QueryHandler(socket));
-        new MatchModel(clients);
-
         ClientModel client = new ClientModel(socket);
 
-        // client.authenticate().subscribe(user -> {
-        //     clients.put(user, new QueryHandler(socket));
-        //     updateClientsQueue();
-        //
-        // });
+        client.authenticate().subscribe(user -> {
+            clients.put(user, new QueryHandler(socket));
+            updateClientsQueue();
+
+        });
     }
 
     private void updateClientsQueue() {
