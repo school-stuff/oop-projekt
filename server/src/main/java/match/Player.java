@@ -20,11 +20,4 @@ public class Player {
                 playerSocket.sendData("watchUpdate", "matchLocation", location);
             }
         }
-
-        // public void subscribeToLocationRequests() {
-        //     playerSocket.getPlayerLocation().subscribe(data -> {
-        //         Location.UserLocation location = (Location.UserLocation) data;
-        //         //sendPlayerLocation(location);
-        //     });
-        // }
     }

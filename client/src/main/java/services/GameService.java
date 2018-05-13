@@ -28,11 +28,6 @@ public class GameService {
     }
 
     private void getServerConnection() {
-        // try {
-        //     server.sendData("watchQuery", "matchLocation", Location.UserLocation.newBuilder().build());
-        // } catch (IOException e) {
-        //     // TODO: error handling
-        // }
 
         server.watchData("matchLocation").subscribe(data -> {
             int[] location = new int[2];
@@ -66,7 +61,8 @@ public class GameService {
         });
     }
 
-    public void sendLocationRequest(Location.UserLocation location) throws IOException {
+    public void sendLocationRequest(int x, int y) throws IOException {
+        Location.UserLocation location = Location.UserLocation.newBuilder().setX(x).setY(y).build();
         server.sendData("watchQuery", "matchLocation", location);
     }
 }

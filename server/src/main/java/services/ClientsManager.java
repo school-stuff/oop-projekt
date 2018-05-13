@@ -46,7 +46,6 @@ public class ClientsManager {
         client.authenticate().subscribe(user -> {
             clients.put(user, new QueryHandler(socket));
             updateClientsQueue();
-
         });
     }
 

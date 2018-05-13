@@ -50,7 +50,6 @@ public class BattleFieldScene {
         render.addEKeyEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                System.out.println("Key pressed: " + event.getCode().getName());
                 ArrayList<KeyPress> keyPresses = new ArrayList<>();
                 keyPresses.addAll(Arrays.asList(Direction.values()));
                 keyPresses.addAll(Arrays.asList(InventorySelection.values()));
@@ -62,7 +61,7 @@ public class BattleFieldScene {
                             int newY = userLocation.getPlayerY() + direction.getY();
                             if (BattleFieldMap.canGoToSquare(newX, newY)) {
                                 try {
-                                    GameService.getInstance().sendLocationRequest(Location.UserLocation.newBuilder().setX(newX).setY(newY).build());
+                                    GameService.getInstance().sendLocationRequest(newX, newY);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
