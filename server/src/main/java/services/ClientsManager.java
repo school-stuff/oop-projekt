@@ -1,6 +1,7 @@
 package services;
 
 import models.ClientModel;
+import models.MatchModel;
 import org.flywaydb.core.Flyway;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;

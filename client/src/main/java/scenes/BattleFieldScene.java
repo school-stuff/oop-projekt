@@ -8,6 +8,7 @@ import enums.KeyPress;
 import enums.SquareTypes;
 import game.Player;
 import io.reactivex.Observable;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -17,7 +18,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
+import shared.match.location.Location;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -35,8 +38,7 @@ public class BattleFieldScene {
         createView();
         showScene(render);
         addKeyEventHandler(render);
-        showMapNodes();
-        // createObserver();
+        createObserver();
     }
 
     private void showScene(Render render) {
@@ -45,10 +47,9 @@ public class BattleFieldScene {
     }
 
     private void addKeyEventHandler(Render render) {
-        render.addEKeyEventHandler(javafx.scene.input.KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        render.addEKeyEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                System.out.println("Key pressed: " + event.getCode().getName());
                 ArrayList<KeyPress> keyPresses = new ArrayList<>();
                 keyPresses.addAll(Arrays.asList(Direction.values()));
                 keyPresses.addAll(Arrays.asList(InventorySelection.values()));
@@ -59,7 +60,11 @@ public class BattleFieldScene {
                             int newX = userLocation.getPlayerX() + direction.getX();
                             int newY = userLocation.getPlayerY() + direction.getY();
                             if (BattleFieldMap.canGoToSquare(newX, newY)) {
-                                // send server info
+                                try {
+                                    GameService.getInstance().sendLocationRequest(newX, newY);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                             break;
                         }
@@ -76,8 +81,10 @@ public class BattleFieldScene {
     private void createObserver() {
         Observable<int[]> userLocationObservable = GameService.getInstance().getCharacterLocation();
         userLocationObservable.subscribe(data -> {
-            userLocation = new RenderedArea(data[0], data[1]);
-            showMapNodes();
+            Platform.runLater(() -> {
+                userLocation = new RenderedArea(data[0], data[1]);
+                showMapNodes();
+            });
         });
     }
 

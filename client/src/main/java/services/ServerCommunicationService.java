@@ -4,6 +4,7 @@ import com.google.protobuf.AbstractMessage;
 import com.google.protobuf.DescriptorProtos;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import javafx.application.Platform;
 import shared.match.location.Location;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
@@ -11,6 +12,7 @@ import shared.user.auth.Auth;
 import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.UnknownServiceException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -166,7 +168,7 @@ public class ServerCommunicationService {
                 updateQueryData(prefix + messageName, Queue.MatchQueue.parseDelimitedFrom(getInput()));
                 break;
             case "matchLocation":
-                updateQueryData(prefix + messageName, Location.LocationData.parseDelimitedFrom(getInput()));
+                updateQueryData(prefix + messageName, Location.UserLocation.parseDelimitedFrom(getInput()));
                 break;
             default:
                 break;

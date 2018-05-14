@@ -28,17 +28,12 @@ public class GameService {
     }
 
     private void getServerConnection() {
-        try {
-            server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
-        } catch (IOException e) {
-            // TODO: error handling
-        }
 
         server.watchData("matchLocation").subscribe(data -> {
             int[] location = new int[2];
-            Location.LocationData result = (Location.LocationData) data;
-            location[0] = result.getUserLocation().getX();
-            location[1] = result.getUserLocation().getY();
+            Location.UserLocation result = (Location.UserLocation) data;
+            location[0] = result.getX();
+            location[1] = result.getY();
             locationReplaySubject.onNext(location);
         });
 
@@ -64,5 +59,10 @@ public class GameService {
             Alive.AliveData result = (Alive.AliveData) data;
             Player.opponentsAlive.onNext(result.getPlayersAlive());
         });
+    }
+
+    public void sendLocationRequest(int x, int y) throws IOException {
+        Location.UserLocation location = Location.UserLocation.newBuilder().setX(x).setY(y).build();
+        server.sendData("watchQuery", "matchLocation", location);
     }
 }

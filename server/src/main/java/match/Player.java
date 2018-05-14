@@ -1,0 +1,23 @@
+package match;
+
+import models.MatchModel;
+import services.QueryHandler;
+import shared.match.location.Location;
+
+public class Player {
+        private QueryHandler playerSocket;
+
+        public Player(QueryHandler playerSocket) {
+            this.playerSocket = playerSocket;
+        }
+
+        public QueryHandler getPlayerSocket() {
+            return playerSocket;
+        }
+
+        public static void sendPlayerLocation(Location.UserLocation location, QueryHandler playerSocket) {
+            if (MatchModel.canGoTo()) {
+                playerSocket.sendData("watchUpdate", "matchLocation", location);
+            }
+        }
+    }

@@ -3,7 +3,9 @@ package services;
 import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import match.Player;
 import shared.errors.UnknownMessage;
+import shared.match.location.Location;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
 
@@ -11,6 +13,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class QueryHandler {
     private Socket socket;
@@ -23,12 +26,16 @@ public class QueryHandler {
 
     public QueryHandler(Socket socket) {
         this.socket = socket;
+        clientCommunicationThread(socket);
+    }
 
+    private void clientCommunicationThread(Socket socket) {
         new Thread(() -> {
             try (
-                DataInputStream inputStream = new DataInputStream(socket.getInputStream())
+                    DataInputStream inputStream = new DataInputStream(socket.getInputStream())
             ) {
                 while (true) {
+
                     String messageType = inputStream.readUTF();
                     String messageName = inputStream.readUTF();
 
@@ -66,6 +73,15 @@ public class QueryHandler {
         return createMutation("register");
     }
 
+    public Observable<AbstractMessage> getPlayerLocation() {
+        for (String watchQueryName : watchQueryList.keySet()) {
+            if (watchQueryName.equals("matchLocation")) {
+                return watchQueryList.get(watchQueryName);
+            }
+        }
+        return createWatchQuery("matchLocation");
+    }
+
     public void sendData(String type, String message, AbstractMessage data) {
         try {
             DataOutputStream outputStream = getDataOutputStream();
@@ -73,7 +89,7 @@ public class QueryHandler {
             outputStream.writeUTF(message);
             data.writeDelimitedTo(outputStream);
         } catch (IOException e) {
-            // TODO: handle
+            throw new RuntimeException("Data not sent to client, exeption description :" + e);
         }
     }
 
@@ -102,12 +118,8 @@ public class QueryHandler {
     private ReplaySubject<AbstractMessage> createWatchQuery(String queryName) {
         ReplaySubject<AbstractMessage> query = watchQueryList.get(queryName);
         if (query == null) {
-            queryList.put(queryName, ReplaySubject.create(1));
-            query = queryList.get(queryName);
-
-            query.subscribe(data -> {
-                sendData("watchUpdate", queryName, data);
-            });
+            watchQueryList.put(queryName, ReplaySubject.create());
+            query = watchQueryList.get(queryName);
         }
         return query;
     }
@@ -175,6 +187,10 @@ public class QueryHandler {
             case "matchQueue":
                 updateWatchQueryData(messageName, Queue.Filters.parseDelimitedFrom(getInputStream()));
                 break;
+            case "matchLocation":
+                Player.sendPlayerLocation(Location.UserLocation.parseDelimitedFrom(getInputStream()), this);
+                //updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
+                break;
             default:
                 handleUnknownMessage();
                 break;
@@ -184,8 +200,8 @@ public class QueryHandler {
     private void handleUnknownMessage() {
         // TODO: tell if message type or query name was invalid
         UnknownMessage.MessageTypeError errorMessage = UnknownMessage.MessageTypeError.newBuilder()
-            .setMessage(UnknownMessage.MessageTypeError.ErrorType.UnknownProperty)
-            .build();
+                .setMessage(UnknownMessage.MessageTypeError.ErrorType.UnknownProperty)
+                .build();
         // TODO: sent error to client
     }
 
@@ -199,6 +215,13 @@ public class QueryHandler {
     }
 
     private void updateWatchQueryData(String queryName, AbstractMessage data) {
-        createWatchQuery(queryName).onNext(data);
+        while (true) {
+            if (watchQueryList.containsKey(queryName)) {
+                ReplaySubject<AbstractMessage> observable = watchQueryList.get(queryName);
+                if (data.isInitialized()) observable.onNext(data);
+                return;
+            }
+            createWatchQuery(queryName);
+        }
     }
 }
