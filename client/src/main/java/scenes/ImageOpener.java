@@ -17,75 +17,64 @@ public class ImageOpener {
 
     public static Image getCharacterImage() {
         if (characterImage == null) {
-            characterImage = getImageFromFile("client/src/main/resources/images/character.png");
+            characterImage = new Image("images/character.png");
         }
         return characterImage;
     }
 
     public static Image getGrassImage() {
         if (grassImage == null) {
-            grassImage = getImageFromFile("client/src/main/resources/images/grass.png");
+            grassImage = new Image("images/grass.png");
         }
         return grassImage;
     }
 
     public static Image getRockImage() {
         if (rockImage == null) {
-            rockImage = getImageFromFile("client/src/main/resources/images/stone.png");
+            rockImage = new Image("images/stone.png");
         }
         return rockImage;
     }
 
     public static Image getWaterImage() {
         if (waterImage == null) {
-            waterImage = getImageFromFile("client/src/main/resources/images/water.png");
+            waterImage = new Image("images/water.png");
         }
         return waterImage;
     }
 
     public static Image getWallImage() {
         if (wallImage == null) {
-            wallImage = getImageFromFile("client/src/main/resources/images/wall.png");
+            wallImage = new Image("images/wall.png");
         }
         return wallImage;
     }
 
     public static Image getSwordImage() {
         if (swordImage == null) {
-            swordImage = getImageFromFile(""); //TODO find image
+            swordImage = new Image(""); //TODO find image
         }
         return swordImage;
     }
 
     public static Image getPickaxeImage() {
         if (pickaxeImage == null) {
-            pickaxeImage = getImageFromFile(""); //TODO find image
+            pickaxeImage = new Image(""); //TODO find image
         }
         return pickaxeImage;
     }
 
     public static Image getPotionImage() {
         if (potionImage == null) {
-            potionImage = getImageFromFile(""); //TODO find image
+            potionImage = new Image(""); //TODO find image
         }
         return potionImage;
     }
 
     public static Image getShieldImage() {
         if (shieldImage == null) {
-            shieldImage = getImageFromFile(""); //TODO find image
+            shieldImage = new Image(""); //TODO find image
         }
         return shieldImage;
-    }
-
-    private static Image getImageFromFile(String file) {
-        try (InputStream inputStream = new FileInputStream(new File(file))) {
-            return new Image(inputStream);
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException("File " + file + "not found");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }
