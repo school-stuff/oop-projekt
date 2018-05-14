@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 public class BattleFieldScene {
     private static int[][] map;
-    private RenderedArea userLocation = new RenderedArea(1, 1);
+    private RenderedArea userLocation;
     private GridPane gridPane;
     private HUD hud;
     private BorderPane borderPane;

@@ -73,6 +73,10 @@ public class QueryHandler {
         return createMutation("register");
     }
 
+    public Observable<AbstractMessage> locationRequest() {
+        return createMutation("matchLocation");
+    }
+
     public Observable<AbstractMessage> getPlayerLocation() {
         for (String watchQueryName : watchQueryList.keySet()) {
             if (watchQueryName.equals("matchLocation")) {
@@ -97,6 +101,10 @@ public class QueryHandler {
         updateWatchQueryData("matchQueue", queue);
     }
 
+    public void updateLocation(AbstractMessage location) {
+        updateWatchQueryData("matchLocation", location);
+    }
+
     private ReplaySubject<AbstractMessage> createMutation(String mutationName) {
         ReplaySubject<AbstractMessage> mutation = mutationResponseList.get(mutationName);
         if (mutation == null) {
@@ -115,7 +123,7 @@ public class QueryHandler {
         return query;
     }
 
-    private ReplaySubject<AbstractMessage> createWatchQuery(String queryName) {
+    public ReplaySubject<AbstractMessage> createWatchQuery(String queryName) {
         ReplaySubject<AbstractMessage> query = watchQueryList.get(queryName);
         if (query == null) {
             watchQueryList.put(queryName, ReplaySubject.create());
@@ -160,6 +168,9 @@ public class QueryHandler {
     private void handleMutation(String messageName) throws IOException {
         // TODO: make this elegant
         switch (messageName) {
+            case "matchLocation":
+                updateMutationData(messageName, Location.UserLocation.parseDelimitedFrom(getInputStream()));
+                break;
             case "login":
                 updateMutationData(messageName, Auth.LoginData.parseDelimitedFrom(getInputStream()));
                 break;
@@ -188,8 +199,7 @@ public class QueryHandler {
                 updateWatchQueryData(messageName, Queue.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             case "matchLocation":
-                Player.sendPlayerLocation(Location.UserLocation.parseDelimitedFrom(getInputStream()), this);
-                //updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
+                updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             default:
                 handleUnknownMessage();

@@ -19,7 +19,7 @@ public class MatchModel {
             players.add(new Player(queryHandler));
         }
         for (Player player : players) {
-            player.sendPlayerLocation(generateFirstLocation(), player.getPlayerSocket());
+            player.updatePlayerLocation(generateFirstLocation());
         }
     }
 
