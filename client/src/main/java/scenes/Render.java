@@ -35,7 +35,8 @@ public class Render extends Application {
             }
         });
 
-        new LoginAndRegisterScene();
+        // new LoginAndRegisterScene();
+        new BattleFieldScene();
         primaryStage.show();
     }
 

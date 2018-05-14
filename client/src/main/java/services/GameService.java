@@ -29,6 +29,13 @@ public class GameService {
 
     private void getServerConnection() {
 
+        try {
+            server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
+        } catch (IOException e) {
+            e.printStackTrace();
+            // TODO: handle
+        }
+
         server.watchData("matchLocation").subscribe(data -> {
             int[] location = new int[2];
             Location.UserLocation result = (Location.UserLocation) data;
@@ -63,6 +70,6 @@ public class GameService {
 
     public void sendLocationRequest(int x, int y) throws IOException {
         Location.UserLocation location = Location.UserLocation.newBuilder().setX(x).setY(y).build();
-        server.sendData("watchQuery", "matchLocation", location);
+        server.sendData("mutation", "matchLocation", location);
     }
 }

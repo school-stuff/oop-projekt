@@ -42,11 +42,13 @@ public class ClientsManager {
 
     private void handleNewClient(Socket socket) {
         ClientModel client = new ClientModel(socket);
-
-        client.authenticate().subscribe(user -> {
-            clients.put(user, new QueryHandler(socket));
-            updateClientsQueue();
-        });
+        // overridden to add users without authentication for testing only the match part of the game
+        clients.put(null, new QueryHandler(socket));
+        // TODO: after waiting list and authentication are sorted, uncomment the following
+        // client.authenticate().subscribe(user -> {
+        //     clients.put(user, new QueryHandler(socket));
+        //     updateClientsQueue();
+        // });
     }
 
     private void updateClientsQueue() {
@@ -62,5 +64,9 @@ public class ClientsManager {
             Queue.MatchQueue queue = Queue.MatchQueue.newBuilder().addAllPersons(clientNames).build();
             queryHandler.updateMatchQueue(queue);
         }
+    }
+
+    public Map<Auth.LoginData, QueryHandler> getClients() {
+        return clients;
     }
 }
