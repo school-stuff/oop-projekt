@@ -33,7 +33,7 @@ public class Player {
         } else {
             lastLocation = locationRequest;
         }
-        if (MatchModel.canGoTo()) {
+        if (MatchModel.canGoTo(location)) {
             locationRequest = location;
             playerSocket.updateLocation(location);
         }

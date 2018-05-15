@@ -1,6 +1,8 @@
 package services;
 
+
 import com.google.protobuf.AbstractMessage;
+import battlefield.BattleFieldMap;
 import game.Player;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
@@ -79,8 +81,10 @@ public class GameService {
         });
     }
 
-    public void sendLocationRequest(int x, int y) throws IOException {
-        Location.UserLocation location = Location.UserLocation.newBuilder().setX(x).setY(y).build();
-        server.sendData("mutation", "matchLocation", location);
+    public void sendLocationRequest(int x, int y) {
+        if (BattleFieldMap.canGoToSquare(x, y)) {
+            Location.UserLocation location = Location.UserLocation.newBuilder().setX(x).setY(y).build();
+            server.sendData("mutation", "matchLocation", location);
+        }
     }
 }
