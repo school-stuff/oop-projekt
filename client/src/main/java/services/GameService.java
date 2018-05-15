@@ -1,5 +1,6 @@
 package services;
 
+import com.google.protobuf.AbstractMessage;
 import game.Player;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
@@ -14,6 +15,7 @@ public class GameService {
     private static GameService ourInstance = new GameService();
     private ServerCommunicationService server = ServerCommunicationService.getInstance();
     private ReplaySubject<int[]> locationReplaySubject = ReplaySubject.create();
+    private ReplaySubject<AbstractMessage> opponentLocationReplaySubject = ReplaySubject.create();
 
     public static GameService getInstance() {
         return ourInstance;
@@ -27,11 +29,15 @@ public class GameService {
         return locationReplaySubject;
     }
 
+    public Observable<AbstractMessage> getOpponentLocation() {
+        return opponentLocationReplaySubject;
+    }
+
     private void getServerConnection() {
 
         try {
             server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
-            // server.sendData("watchQuery", "opponentLocation", Location.Filters.newBuilder().build());
+            server.sendData("watchQuery", "opponentLocation", Location.Filters.newBuilder().build());
         } catch (IOException e) {
             e.printStackTrace();
             // TODO: handle
@@ -43,6 +49,10 @@ public class GameService {
             location[0] = result.getX();
             location[1] = result.getY();
             locationReplaySubject.onNext(location);
+        });
+
+        server.watchData("opponentLocation").subscribe(data -> {
+            opponentLocationReplaySubject.onNext(data);
         });
 
         server.watchData("matchHealth").subscribe(data -> {

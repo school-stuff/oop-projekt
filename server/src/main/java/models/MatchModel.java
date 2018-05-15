@@ -44,13 +44,13 @@ public class MatchModel {
                     for (int i = 0; i < players.size(); i++) {
                         players.get(i).updatePlayerLocation(players.get(i).getLocationRequest());
 
-                        // List<Player> playersWithoutThemselves = new ArrayList<>();
-                        // playersWithoutThemselves.addAll(players.subList(0, i));
-                        // playersWithoutThemselves.addAll(players.subList(i + 1, players.size()));
-                        //
-                        // for (Player opponent : playersWithoutThemselves) {
-                        //     players.get(i).sendOpponentLocation(opponent.getLastLocation());
-                        // }
+                        List<Player> playersWithoutThemselves = new ArrayList<>();
+                        playersWithoutThemselves.addAll(players.subList(0, i));
+                        playersWithoutThemselves.addAll(players.subList(i + 1, players.size()));
+
+                        for (Player opponent : playersWithoutThemselves) {
+                            players.get(i).sendOpponentLocation(opponent.getLastLocation());
+                        }
                     }
                 } else {
                     players.get(0).updatePlayerLocation(players.get(0).getLocationRequest());

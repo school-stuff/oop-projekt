@@ -21,10 +21,10 @@ public class Player {
         playerSocket.createWatchQuery("matchLocation").subscribe(data -> {
             playerSocket.sendData("watchUpdate", "matchLocation", data);
         });
-    }
 
-    public QueryHandler getPlayerSocket() {
-        return playerSocket;
+        playerSocket.createWatchQuery("opponentLocation").subscribe(data -> {
+            playerSocket.sendData("watchUpdate", "opponentLocation", data);
+        });
     }
 
     public void updatePlayerLocation(Location.UserLocation location) {
@@ -36,12 +36,11 @@ public class Player {
         if (MatchModel.canGoTo()) {
             locationRequest = location;
             playerSocket.updateLocation(location);
-            System.out.println(location);
         }
     }
 
     public void sendOpponentLocation(Location.UserLocation location) {
-        playerSocket.sendData("watchUpdate", "opponentLocation", location);
+        playerSocket.updateOpponentLocation(location);
     }
 
     public Location.UserLocation getLastLocation() {

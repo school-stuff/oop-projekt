@@ -2,6 +2,7 @@ package scenes;
 
 
 import battlefield.*;
+import com.google.protobuf.AbstractMessage;
 import enums.Direction;
 import enums.InventorySelection;
 import enums.KeyPress;
@@ -80,6 +81,13 @@ public class BattleFieldScene {
 
     private void createObserver() {
         Observable<int[]> userLocationObservable = GameService.getInstance().getCharacterLocation();
+        Observable<AbstractMessage> opponentLocationObservable = GameService.getInstance().getOpponentLocation();
+
+        opponentLocationObservable.subscribe(data -> {
+            Platform.runLater(() -> {
+                showOpponent((Location.UserLocation) data);
+            });
+        });
         userLocationObservable.subscribe(data -> {
             Platform.runLater(() -> {
                 userLocation = new RenderedArea(data[0], data[1]);
@@ -116,6 +124,17 @@ public class BattleFieldScene {
             }
         }
         addCharacterLayer();
+    }
+
+    private void showOpponent(Location.UserLocation location) {
+        ImageView imageView = new ImageView(ImageOpener.getCharacterImage());
+        imageView.setFitWidth(50);
+        imageView.setFitHeight(50);
+        int relativeToUserX = location.getX() - userLocation.getPlayerX();
+        int relativeToUserY = location.getY() - userLocation.getPlayerY();
+        gridPane.add(imageView,
+                userLocation.renderedX() + relativeToUserX,
+                userLocation.renderedY() + relativeToUserY);
     }
 
     public void addCharacterLayer() {
