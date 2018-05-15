@@ -21,6 +21,7 @@ public class MatchModel {
         for (Player player : players) {
             player.updatePlayerLocation(generateFirstLocation());
         }
+        updateClientDelayThread();
     }
 
     private Location.UserLocation generateFirstLocation() {
@@ -29,6 +30,33 @@ public class MatchModel {
             firstLocation = getRandomLocation();
         }
         return firstLocation;
+    }
+
+    private void updateClientDelayThread() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (players.size() > 1) {
+                    for (int i = 0; i < players.size(); i++) {
+                        players.get(i).updatePlayerLocation(players.get(i).getLocationRequest());
+
+                        // List<Player> playersWithoutThemselves = new ArrayList<>();
+                        // playersWithoutThemselves.addAll(players.subList(0, i));
+                        // playersWithoutThemselves.addAll(players.subList(i + 1, players.size()));
+                        //
+                        // for (Player opponent : playersWithoutThemselves) {
+                        //     players.get(i).sendOpponentLocation(opponent.getLastLocation());
+                        // }
+                    }
+                } else {
+                    players.get(0).updatePlayerLocation(players.get(0).getLocationRequest());
+                }
+            }
+        }).start();
     }
 
     private Location.UserLocation getRandomLocation() {

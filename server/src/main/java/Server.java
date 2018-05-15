@@ -11,7 +11,7 @@ public class Server {
         ClientsManager.getInstance();
         while (true) { // temporary solution (for testing purposes) to let clients accumulate
             Thread.sleep(1000);
-            if (ClientsManager.getInstance().getClients().size() > 0) {
+            if (ClientsManager.getInstance().getClients().size() > 1) {
                 break;
             }
         }

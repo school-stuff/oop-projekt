@@ -31,6 +31,7 @@ public class GameService {
 
         try {
             server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
+            // server.sendData("watchQuery", "opponentLocation", Location.Filters.newBuilder().build());
         } catch (IOException e) {
             e.printStackTrace();
             // TODO: handle
