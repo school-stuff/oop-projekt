@@ -92,10 +92,14 @@ public class ServerCommunicationService {
         return true;
     }
 
-    public void sendData(String requestType, String requestName, AbstractMessage data) throws IOException {
-        getDataOutput().writeUTF(requestType);
-        getDataOutput().writeUTF(requestName);
-        data.writeDelimitedTo(getOutput());
+    public void sendData(String requestType, String requestName, AbstractMessage data) {
+        try {
+            getDataOutput().writeUTF(requestType);
+            getDataOutput().writeUTF(requestName);
+            data.writeDelimitedTo(getOutput());
+        } catch (IOException e) {
+            throw new RuntimeException("Data could not be sent to server in sendData method");
+        }
     }
 
     public Observable<AbstractMessage> getData(String requestName) {

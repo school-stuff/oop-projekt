@@ -1,5 +1,6 @@
 package services;
 
+import battlefield.BattleFieldMap;
 import game.Player;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
@@ -29,12 +30,7 @@ public class GameService {
 
     private void getServerConnection() {
 
-        try {
-            server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
-        } catch (IOException e) {
-            e.printStackTrace();
-            // TODO: handle
-        }
+        server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
 
         server.watchData("matchLocation").subscribe(data -> {
             int[] location = new int[2];
@@ -68,8 +64,10 @@ public class GameService {
         });
     }
 
-    public void sendLocationRequest(int x, int y) throws IOException {
-        Location.UserLocation location = Location.UserLocation.newBuilder().setX(x).setY(y).build();
-        server.sendData("mutation", "matchLocation", location);
+    public void sendLocationRequest(int x, int y) {
+        if (BattleFieldMap.canGoToSquare(x, y)) {
+            Location.UserLocation location = Location.UserLocation.newBuilder().setX(x).setY(y).build();
+            server.sendData("mutation", "matchLocation", location);
+        }
     }
 }

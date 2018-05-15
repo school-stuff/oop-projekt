@@ -2,6 +2,7 @@ package models;
 
 import battleFieldMap.Maps;
 import match.Player;
+import services.MapService;
 import services.QueryHandler;
 import shared.match.location.Location;
 import shared.user.auth.Auth;
@@ -23,9 +24,13 @@ public class MatchModel {
         }
     }
 
+    public static boolean canGoTo(Location.UserLocation location) {
+        return MapService.canGoToLocation(location.getX(), location.getY());
+    }
+
     private Location.UserLocation generateFirstLocation() {
         Location.UserLocation firstLocation = getRandomLocation();
-        while (!canGoTo()) {
+        while (!canGoTo(firstLocation)) {
             firstLocation = getRandomLocation();
         }
         return firstLocation;
@@ -33,10 +38,5 @@ public class MatchModel {
 
     private Location.UserLocation getRandomLocation() {
         return Location.UserLocation.newBuilder().setX((int) Math.round(Math.random() * Maps.map[0].length)).setY((int) Math.round(Math.random() * Maps.map.length)).build();
-    }
-
-    public static boolean canGoTo() {
-        //TODO: method body
-        return true;
     }
 }

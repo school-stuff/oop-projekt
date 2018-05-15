@@ -9,7 +9,6 @@ import enums.SquareTypes;
 import game.Player;
 import io.reactivex.Observable;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
@@ -18,7 +17,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
-import shared.match.location.Location;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,52 +28,40 @@ public class BattleFieldScene {
     private GridPane gridPane;
     private HUD hud;
     private BorderPane borderPane;
+    private ArrayList<KeyPress> keyPresses;
 
 
     public BattleFieldScene() {
+        createKeyPressesList();
         map = new BattleFieldMap().getBattleFieldArray();
         Render render = Render.getInstance();
         createView();
         showScene(render);
-        addKeyEventHandler(render);
+        render.addEKeyEventHandler(KeyEvent.KEY_PRESSED, event -> handleKeyEvent(event));
         createObserver();
+    }
+
+    public void handleKeyEvent(KeyEvent event) {
+        for (KeyPress keyPress : keyPresses) {
+            if (keyPress.getKeyCode() == event.getCode()) {
+                if (keyPress.getClass() == Direction.class) {
+                    Direction direction = (Direction) keyPress;
+                    int newX = userLocation.getPlayerX() + direction.getX();
+                    int newY = userLocation.getPlayerY() + direction.getY();
+                    GameService.getInstance().sendLocationRequest(newX, newY);
+                    break;
+                }
+                if (keyPress.getClass() == InventorySelection.class) {
+                    InventorySelection inventorySelection = (InventorySelection) keyPress;
+                    Player.slotEquipped.onNext(inventorySelection.getValue());
+                }
+            }
+        }
     }
 
     private void showScene(Render render) {
         Scene battleFieldScene = new Scene(borderPane, Color.BLACK);
         render.showScene(battleFieldScene);
-    }
-
-    private void addKeyEventHandler(Render render) {
-        render.addEKeyEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                ArrayList<KeyPress> keyPresses = new ArrayList<>();
-                keyPresses.addAll(Arrays.asList(Direction.values()));
-                keyPresses.addAll(Arrays.asList(InventorySelection.values()));
-                for (KeyPress keyPress : keyPresses) {
-                    if (keyPress.getKeyCode() == event.getCode()) {
-                        if (keyPress.getClass() == Direction.class) {
-                            Direction direction = (Direction) keyPress;
-                            int newX = userLocation.getPlayerX() + direction.getX();
-                            int newY = userLocation.getPlayerY() + direction.getY();
-                            if (BattleFieldMap.canGoToSquare(newX, newY)) {
-                                try {
-                                    GameService.getInstance().sendLocationRequest(newX, newY);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                            break;
-                        }
-                        if (keyPress.getClass() == InventorySelection.class) {
-                            InventorySelection inventorySelection = (InventorySelection) keyPress;
-                            Player.slotEquipped.onNext(inventorySelection.getValue());
-                        }
-                    }
-                }
-            }
-        });
     }
 
     private void createObserver() {
@@ -116,6 +102,12 @@ public class BattleFieldScene {
             }
         }
         addCharacterLayer();
+    }
+
+    private void createKeyPressesList() {
+        keyPresses = new ArrayList<>();
+        keyPresses.addAll(Arrays.asList(Direction.values()));
+        keyPresses.addAll(Arrays.asList(InventorySelection.values()));
     }
 
     public void addCharacterLayer() {

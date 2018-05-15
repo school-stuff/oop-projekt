@@ -24,7 +24,7 @@ public class Player {
         }
 
         public void updatePlayerLocation(Location.UserLocation location) {
-            if (MatchModel.canGoTo()) {
+            if (MatchModel.canGoTo(location)) {
                 playerSocket.updateLocation(location);
             }
         }
