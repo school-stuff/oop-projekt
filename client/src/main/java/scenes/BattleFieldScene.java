@@ -93,7 +93,7 @@ public class BattleFieldScene {
     }
 
     private void showMapNodes() {
-        gridPane.getChildren().removeAll();
+        gridPane.getChildren().clear();
         BattleFieldSquare square;
         for (int i = 0; i < userLocation.squaresInRow(); i++) {
             for (int j = 0; j < userLocation.squaresInColumns(); j++) {
