@@ -1,11 +1,12 @@
 package battlefield;
 
+import enums.SquareTypes;
 import scenes.ImageOpener;
 
 public class Wall extends BattleFieldSquare{
     public Wall() {
         super();
-        addLayer(ImageOpener.getWallImage());
+        addLayer(ImageOpener.getImage("wall"));
     }
 
     @Override

@@ -12,7 +12,7 @@ public class BattleFieldSquare {
     private List<Image> pictureLayers = new ArrayList<>();
 
     public BattleFieldSquare()  {
-        pictureLayers.add(ImageOpener.getGrassImage());
+        pictureLayers.add(ImageOpener.getImage("grass"));
     }
 
     public void addImageToGridPane(GridPane gridPane, int locationX, int locationY) {
