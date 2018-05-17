@@ -109,7 +109,7 @@ public class BattleFieldScene {
                 square.addImageToGridPane(gridPane, j, i);
             }
         }
-        addCharacterLayer();
+        addImageLayer("character", userLocation.renderedX(), userLocation.renderedY());
     }
 
     private void showOpponent(Location.UserLocation location) {
@@ -129,10 +129,10 @@ public class BattleFieldScene {
         keyPresses.addAll(Arrays.asList(InventorySelection.values()));
     }
 
-    public void addCharacterLayer() {
-        ImageView imageView = new ImageView(ImageOpener.getCharacterImage());
+    public void addImageLayer(String type, int x, int y) {
+        ImageView imageView = new ImageView(ImageOpener.getImage(type));
         imageView.setFitWidth(50);
         imageView.setFitHeight(50);
-        gridPane.add(imageView, userLocation.renderedX(), userLocation.renderedY());
+        gridPane.add(imageView, x, y);
     }
 }

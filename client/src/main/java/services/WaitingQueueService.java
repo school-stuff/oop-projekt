@@ -31,9 +31,7 @@ public class WaitingQueueService {
 
     private void getServerConnection() {
         // Ask for server to start sending queue
-
         server.sendData("watchQuery", "matchQueue", Queue.Filters.newBuilder().build());
-
 
         server.watchData("matchQueue").subscribe(data -> {
             Queue.MatchQueue result = (Queue.MatchQueue) data;
