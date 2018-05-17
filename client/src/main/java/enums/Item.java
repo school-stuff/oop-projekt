@@ -5,10 +5,10 @@ import scenes.ImageOpener;
 
 public enum Item {
     NULL(0, "Empty", null),
-    SWORD(1, "Weapon", ImageOpener.getSwordImage()),
-    PICKAXE(2, "Utility", ImageOpener.getPickaxeImage()),
-    POTION(3, "Consumable", ImageOpener.getPotionImage()),
-    SHIELD(4, "Consumable", ImageOpener.getShieldImage());
+    SWORD(1, "Weapon", ImageOpener.getImage("sword")),
+    PICKAXE(2, "Utility", ImageOpener.getImage("pickaxe")),
+    POTION(3, "Consumable", ImageOpener.getImage("potion")),
+    SHIELD(4, "Consumable", ImageOpener.getImage("shield"));
 
     private int id;
     private String type;

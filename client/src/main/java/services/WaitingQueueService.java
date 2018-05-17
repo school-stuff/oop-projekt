@@ -24,18 +24,14 @@ public class WaitingQueueService {
         return replaySubject;
     }
 
-    private void gameStarted(){
+    private void gameStarted() {
         // if server sends info that game has started
         replaySubject.onComplete();
     }
 
     private void getServerConnection() {
         // Ask for server to start sending queue
-        try {
-            server.sendData("watchQuery", "matchQueue", Queue.Filters.newBuilder().build());
-        } catch (IOException e) {
-            // TODO: error handling
-        }
+        server.sendData("watchQuery", "matchQueue", Queue.Filters.newBuilder().build());
 
         server.watchData("matchQueue").subscribe(data -> {
             Queue.MatchQueue result = (Queue.MatchQueue) data;
