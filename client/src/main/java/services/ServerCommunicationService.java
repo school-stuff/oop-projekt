@@ -174,6 +174,9 @@ public class ServerCommunicationService {
             case "matchLocation":
                 updateQueryData(prefix + messageName, Location.UserLocation.parseDelimitedFrom(getInput()));
                 break;
+            case "opponentLocation":
+                updateQueryData(prefix + messageName, Location.UserLocation.parseDelimitedFrom(getInput()));
+                break;
             default:
                 break;
         }

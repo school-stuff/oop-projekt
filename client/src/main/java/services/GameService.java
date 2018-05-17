@@ -1,5 +1,7 @@
 package services;
 
+
+import com.google.protobuf.AbstractMessage;
 import battlefield.BattleFieldMap;
 import game.Player;
 import io.reactivex.Observable;
@@ -14,7 +16,8 @@ import java.io.IOException;
 public class GameService {
     private static GameService ourInstance = new GameService();
     private ServerCommunicationService server = ServerCommunicationService.getInstance();
-    private ReplaySubject<int[]> locationReplaySubject = ReplaySubject.create();
+    private ReplaySubject<AbstractMessage> locationReplaySubject = ReplaySubject.create();
+    private ReplaySubject<AbstractMessage> opponentLocationReplaySubject = ReplaySubject.create();
 
     public static GameService getInstance() {
         return ourInstance;
@@ -24,20 +27,24 @@ public class GameService {
         getServerConnection();
     }
 
-    public Observable<int[]> getCharacterLocation() {
+    public Observable<AbstractMessage> getCharacterLocation() {
         return locationReplaySubject;
     }
 
-    private void getServerConnection() {
+    public Observable<AbstractMessage> getOpponentLocation() {
+        return opponentLocationReplaySubject;
+    }
 
+    private void getServerConnection() {
         server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
+        server.sendData("watchQuery", "opponentLocation", Location.Filters.newBuilder().build());
 
         server.watchData("matchLocation").subscribe(data -> {
-            int[] location = new int[2];
-            Location.UserLocation result = (Location.UserLocation) data;
-            location[0] = result.getX();
-            location[1] = result.getY();
-            locationReplaySubject.onNext(location);
+            locationReplaySubject.onNext(data);
+        });
+
+        server.watchData("opponentLocation").subscribe(data -> {
+            opponentLocationReplaySubject.onNext(data);
         });
 
         server.watchData("matchHealth").subscribe(data -> {

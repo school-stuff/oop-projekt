@@ -2,6 +2,7 @@ package scenes;
 
 
 import battlefield.*;
+import com.google.protobuf.AbstractMessage;
 import enums.Direction;
 import enums.InventorySelection;
 import enums.KeyPress;
@@ -17,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
+import shared.match.location.Location;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,10 +67,16 @@ public class BattleFieldScene {
     }
 
     private void createObserver() {
-        Observable<int[]> userLocationObservable = GameService.getInstance().getCharacterLocation();
-        userLocationObservable.subscribe(data -> {
+        GameService.getInstance().getOpponentLocation().subscribe(data -> {
             Platform.runLater(() -> {
-                userLocation = new RenderedArea(data[0], data[1]);
+                showOpponent((Location.UserLocation) data);
+            });
+        });
+        GameService.getInstance().getCharacterLocation().subscribe(data -> {
+            Platform.runLater(() -> {
+                userLocation = new RenderedArea(
+                        ((Location.UserLocation) data).getX(),
+                        ((Location.UserLocation) data).getY());
                 showMapNodes();
             });
         });
@@ -104,6 +112,15 @@ public class BattleFieldScene {
         addImageLayer("character", userLocation.renderedX(), userLocation.renderedY());
     }
 
+    private void showOpponent(Location.UserLocation location) {
+        int relativeToUserX = location.getX() - userLocation.getPlayerX();
+        int relativeToUserY = location.getY() - userLocation.getPlayerY();
+        addImageLayer(
+                "character",
+                userLocation.renderedX() + relativeToUserX,
+                userLocation.renderedY() + relativeToUserY);
+    }
+      
     private void createKeyPressesList() {
         keyPresses = new ArrayList<>();
         keyPresses.addAll(Arrays.asList(Direction.values()));

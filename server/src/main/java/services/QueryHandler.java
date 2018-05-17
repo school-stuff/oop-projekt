@@ -105,6 +105,10 @@ public class QueryHandler {
         updateWatchQueryData("matchLocation", location);
     }
 
+    public void updateOpponentLocation(AbstractMessage location) {
+        updateWatchQueryData("opponentLocation", location);
+    }
+
     private ReplaySubject<AbstractMessage> createMutation(String mutationName) {
         ReplaySubject<AbstractMessage> mutation = mutationResponseList.get(mutationName);
         if (mutation == null) {
@@ -199,6 +203,9 @@ public class QueryHandler {
                 updateWatchQueryData(messageName, Queue.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             case "matchLocation":
+                updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
+                break;
+            case "opponentLocation":
                 updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             default:

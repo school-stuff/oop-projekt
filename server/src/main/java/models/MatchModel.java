@@ -22,6 +22,7 @@ public class MatchModel {
         for (Player player : players) {
             player.updatePlayerLocation(generateFirstLocation());
         }
+        updateClientDelayThread();
     }
 
     public static boolean canGoTo(Location.UserLocation location) {
@@ -34,6 +35,28 @@ public class MatchModel {
             firstLocation = getRandomLocation();
         }
         return firstLocation;
+    }
+
+    private void updateClientDelayThread() {
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (players.size() > 1) {
+                    for (int i = 0; i < players.size(); i++) {
+                        players.get(i).updatePlayerLocation(players.get(i).getLocationRequest());
+                        for (Player player : players) {
+                            if (!player.equals(players.get(i))) {
+                                players.get(i).sendOpponentLocation(player.getLastLocation());
+                            }
+                        }
+                    }
+                }
+            }
+        }).start();
     }
 
     private Location.UserLocation getRandomLocation() {

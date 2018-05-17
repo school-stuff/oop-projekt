@@ -43,7 +43,7 @@ public class ClientsManager {
     private void handleNewClient(Socket socket) {
         ClientModel client = new ClientModel(socket);
         // overridden to add users without authentication for testing only the match part of the game
-        clients.put(null, new QueryHandler(socket));
+        clients.put(Auth.LoginData.newBuilder().setEmail(String.valueOf(clients.size())).build(), new QueryHandler(socket));
         // TODO: after waiting list and authentication are sorted, uncomment the following
         // client.authenticate().subscribe(user -> {
         //     clients.put(user, new QueryHandler(socket));
