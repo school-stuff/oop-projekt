@@ -5,6 +5,7 @@ import match.Player;
 import services.MapService;
 import services.QueryHandler;
 import shared.match.location.Location;
+import shared.match.player.Health;
 import shared.user.auth.Auth;
 
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ public class MatchModel {
         }
         for (Player player : players) {
             player.updatePlayerLocation(generateFirstLocation());
+            player.updatePlayerHealth(Health.HealthData.newBuilder().setHealth(100).setArmor(0).build());
         }
         updateClientDelayThread();
     }

@@ -3,6 +3,7 @@ package match;
 import models.MatchModel;
 import services.QueryHandler;
 import shared.match.location.Location;
+import shared.match.player.Health;
 
 public class Player {
 
@@ -25,6 +26,10 @@ public class Player {
         playerSocket.createWatchQuery("opponentLocation").subscribe(data -> {
             playerSocket.sendData("watchUpdate", "opponentLocation", data);
         });
+
+        playerSocket.createWatchQuery("matchHealth").subscribe(data -> {
+            playerSocket.sendData("watchUpdate", "matchHealth", data);
+        });
     }
 
     public void updatePlayerLocation(Location.UserLocation location) {
@@ -37,6 +42,10 @@ public class Player {
             locationRequest = location;
             playerSocket.updateLocation(location);
         }
+    }
+
+    public void updatePlayerHealth(Health.HealthData healthData) {
+        playerSocket.updateHealth(healthData);
     }
 
     public void sendOpponentLocation(Location.UserLocation location) {
