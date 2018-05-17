@@ -16,7 +16,7 @@ import java.io.IOException;
 public class GameService {
     private static GameService ourInstance = new GameService();
     private ServerCommunicationService server = ServerCommunicationService.getInstance();
-    private ReplaySubject<int[]> locationReplaySubject = ReplaySubject.create();
+    private ReplaySubject<AbstractMessage> locationReplaySubject = ReplaySubject.create();
     private ReplaySubject<AbstractMessage> opponentLocationReplaySubject = ReplaySubject.create();
 
     public static GameService getInstance() {
@@ -27,7 +27,7 @@ public class GameService {
         getServerConnection();
     }
 
-    public Observable<int[]> getCharacterLocation() {
+    public Observable<AbstractMessage> getCharacterLocation() {
         return locationReplaySubject;
     }
 
@@ -36,21 +36,11 @@ public class GameService {
     }
 
     private void getServerConnection() {
-
-        try {
-            server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
-            server.sendData("watchQuery", "opponentLocation", Location.Filters.newBuilder().build());
-        } catch (IOException e) {
-            e.printStackTrace();
-            // TODO: handle
-        }
+        server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
+        server.sendData("watchQuery", "opponentLocation", Location.Filters.newBuilder().build());
 
         server.watchData("matchLocation").subscribe(data -> {
-            int[] location = new int[2];
-            Location.UserLocation result = (Location.UserLocation) data;
-            location[0] = result.getX();
-            location[1] = result.getY();
-            locationReplaySubject.onNext(location);
+            locationReplaySubject.onNext(data);
         });
 
         server.watchData("opponentLocation").subscribe(data -> {

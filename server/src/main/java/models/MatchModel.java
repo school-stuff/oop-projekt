@@ -41,24 +41,19 @@ public class MatchModel {
         new Thread(() -> {
             while (true) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(100);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 if (players.size() > 1) {
                     for (int i = 0; i < players.size(); i++) {
                         players.get(i).updatePlayerLocation(players.get(i).getLocationRequest());
-
-                        List<Player> playersWithoutThemselves = new ArrayList<>();
-                        playersWithoutThemselves.addAll(players.subList(0, i));
-                        playersWithoutThemselves.addAll(players.subList(i + 1, players.size()));
-
-                        for (Player opponent : playersWithoutThemselves) {
-                            players.get(i).sendOpponentLocation(opponent.getLastLocation());
+                        for (Player player : players) {
+                            if (!player.equals(players.get(i))) {
+                                players.get(i).sendOpponentLocation(player.getLastLocation());
+                            }
                         }
                     }
-                } else {
-                    players.get(0).updatePlayerLocation(players.get(0).getLocationRequest());
                 }
             }
         }).start();

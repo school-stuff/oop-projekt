@@ -18,6 +18,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
+import shared.match.location.Location;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,17 +67,16 @@ public class BattleFieldScene {
     }
 
     private void createObserver() {
-        Observable<int[]> userLocationObservable = GameService.getInstance().getCharacterLocation();
-        Observable<AbstractMessage> opponentLocationObservable = GameService.getInstance().getOpponentLocation();
-
-        opponentLocationObservable.subscribe(data -> {
+        GameService.getInstance().getOpponentLocation().subscribe(data -> {
             Platform.runLater(() -> {
                 showOpponent((Location.UserLocation) data);
             });
         });
-        userLocationObservable.subscribe(data -> {
+        GameService.getInstance().getCharacterLocation().subscribe(data -> {
             Platform.runLater(() -> {
-                userLocation = new RenderedArea(data[0], data[1]);
+                userLocation = new RenderedArea(
+                        ((Location.UserLocation) data).getX(),
+                        ((Location.UserLocation) data).getY());
                 showMapNodes();
             });
         });
@@ -101,7 +101,7 @@ public class BattleFieldScene {
     }
 
     private void showMapNodes() {
-        gridPane.getChildren().removeAll();
+        gridPane.getChildren().clear();
         BattleFieldSquare square;
         for (int i = 0; i < userLocation.squaresInRow(); i++) {
             for (int j = 0; j < userLocation.squaresInColumns(); j++) {
@@ -121,6 +121,7 @@ public class BattleFieldScene {
         gridPane.add(imageView,
                 userLocation.renderedX() + relativeToUserX,
                 userLocation.renderedY() + relativeToUserY);
+    }
       
     private void createKeyPressesList() {
         keyPresses = new ArrayList<>();
