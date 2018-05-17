@@ -16,28 +16,18 @@ import java.io.IOException;
 public class GameService {
     private static GameService ourInstance = new GameService();
     private ServerCommunicationService server = ServerCommunicationService.getInstance();
-    private ReplaySubject<AbstractMessage> locationReplaySubject = ReplaySubject.create();
-    private ReplaySubject<AbstractMessage> opponentLocationReplaySubject = ReplaySubject.create();
 
     public static GameService getInstance() {
         return ourInstance;
     }
 
+    private final ReplaySubject<AbstractMessage> locationReplaySubject = ReplaySubject.create();
+    private final ReplaySubject<AbstractMessage> opponentLocationReplaySubject = ReplaySubject.create();
+
     public GameService() {
-        getServerConnection();
-    }
-
-    public Observable<AbstractMessage> getCharacterLocation() {
-        return locationReplaySubject;
-    }
-
-    public Observable<AbstractMessage> getOpponentLocation() {
-        return opponentLocationReplaySubject;
-    }
-
-    private void getServerConnection() {
-        server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
-        server.sendData("watchQuery", "opponentLocation", Location.Filters.newBuilder().build());
+        sendWatchQuery("matchLocation");
+        sendWatchQuery("opponentLocation");
+        sendWatchQuery("matchHealth");
 
         server.watchData("matchLocation").subscribe(data -> {
             locationReplaySubject.onNext(data);
@@ -69,6 +59,19 @@ public class GameService {
             Alive.AliveData result = (Alive.AliveData) data;
             Player.opponentsAlive.onNext(result.getPlayersAlive());
         });
+    }
+
+
+    public Observable<AbstractMessage> getCharacterLocation() {
+        return locationReplaySubject;
+    }
+
+    public Observable<AbstractMessage> getOpponentLocation() {
+        return opponentLocationReplaySubject;
+    }
+
+    private void sendWatchQuery(String requestName) {
+        server.sendData("watchQuery", requestName, Location.Filters.newBuilder().build());
     }
 
     public void sendLocationRequest(int x, int y) {

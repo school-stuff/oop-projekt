@@ -45,13 +45,11 @@ public class MatchModel {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (players.size() > 1) {
-                    for (int i = 0; i < players.size(); i++) {
-                        players.get(i).updatePlayerLocation(players.get(i).getLocationRequest());
-                        for (Player player : players) {
-                            if (!player.equals(players.get(i))) {
-                                players.get(i).sendOpponentLocation(player.getLastLocation());
-                            }
+                for (int i = 0; i < players.size(); i++) {
+                    players.get(i).updatePlayerLocation(players.get(i).getLocationRequest());
+                    for (Player player : players) {
+                        if (!player.equals(players.get(i))) {
+                            players.get(i).sendOpponentLocation(player.getLastLocation());
                         }
                     }
                 }
