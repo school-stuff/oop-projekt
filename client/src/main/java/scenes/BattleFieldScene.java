@@ -113,12 +113,10 @@ public class BattleFieldScene {
     }
 
     private void showOpponent(Location.UserLocation location) {
-        ImageView imageView = new ImageView(ImageOpener.getCharacterImage());
-        imageView.setFitWidth(50);
-        imageView.setFitHeight(50);
         int relativeToUserX = location.getX() - userLocation.getPlayerX();
         int relativeToUserY = location.getY() - userLocation.getPlayerY();
-        gridPane.add(imageView,
+        addImageLayer(
+                "character",
                 userLocation.renderedX() + relativeToUserX,
                 userLocation.renderedY() + relativeToUserY);
     }
