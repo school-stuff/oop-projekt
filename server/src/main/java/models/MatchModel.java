@@ -1,6 +1,7 @@
 package models;
 
 import battleFieldMap.Maps;
+import javafx.application.Platform;
 import match.Player;
 import services.MapService;
 import services.QueryHandler;
@@ -47,16 +48,24 @@ public class MatchModel {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                for (int i = 0; i < players.size(); i++) {
-                    players.get(i).updatePlayerLocation(players.get(i).getLocationRequest());
-                    for (Player player : players) {
-                        if (!player.equals(players.get(i))) {
-                            players.get(i).sendOpponentLocation(player.getLastLocation());
-                        }
-                    }
-                }
+                updatePlayers();
             }
         }).start();
+    }
+
+    private void updatePlayers() {
+        for (int i = 0; i < players.size(); i++) {
+            players.get(i).updatePlayerLocation(players.get(i).getLocationRequest());
+            updatePlayerOpponents(players.get(i));
+        }
+    }
+
+    private void updatePlayerOpponents(Player client) {
+        for (Player player : players) {
+            if (!player.equals(client)) {
+                client.sendOpponentLocation(player.getLastLocation());
+            }
+        }
     }
 
     private Location.UserLocation getRandomLocation() {
