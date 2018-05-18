@@ -1,6 +1,7 @@
 package models;
 
 import battleFieldMap.Maps;
+import javafx.application.Platform;
 import match.Player;
 import services.MapService;
 import services.QueryHandler;
