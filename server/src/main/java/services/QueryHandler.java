@@ -65,6 +65,10 @@ public class QueryHandler {
         return createWatchQuery("matchQueue");
     }
 
+    public Observable<AbstractMessage> getPlayerLocation() {
+        return createWatchQuery("matchLocation");
+    }
+
     public Observable<AbstractMessage> login() {
         return createMutation("login");
     }
@@ -77,14 +81,6 @@ public class QueryHandler {
         return createMutation("matchLocation");
     }
 
-    public Observable<AbstractMessage> getPlayerLocation() {
-        for (String watchQueryName : watchQueryList.keySet()) {
-            if (watchQueryName.equals("matchLocation")) {
-                return watchQueryList.get(watchQueryName);
-            }
-        }
-        return createWatchQuery("matchLocation");
-    }
 
     public void sendData(String type, String message, AbstractMessage data) {
         try {
@@ -93,7 +89,7 @@ public class QueryHandler {
             outputStream.writeUTF(message);
             data.writeDelimitedTo(outputStream);
         } catch (IOException e) {
-            throw new RuntimeException("Data not sent to client, exeption description :" + e);
+            throw new RuntimeException("Data not sent to client, exception description :" + e);
         }
     }
 
@@ -107,6 +103,10 @@ public class QueryHandler {
 
     public void updateOpponentLocation(AbstractMessage location) {
         updateWatchQueryData("opponentLocation", location);
+    }
+
+    public void updateHealth(AbstractMessage healthData) {
+        updateWatchQueryData("matchHealth", healthData);
     }
 
     private ReplaySubject<AbstractMessage> createMutation(String mutationName) {
@@ -206,6 +206,9 @@ public class QueryHandler {
                 updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             case "opponentLocation":
+                updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
+                break;
+            case "matchHealth":
                 updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             default:
