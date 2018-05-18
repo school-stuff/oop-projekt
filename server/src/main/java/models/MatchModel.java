@@ -16,6 +16,9 @@ import java.util.Map;
 public class MatchModel {
     private final List<Player> players;
 
+    private final int mapSizeX = Maps.map.length;
+    private final int mapSizeY = Maps.map[0].length;
+
     public MatchModel(Map<Auth.LoginData, QueryHandler> clients) {
         players = new ArrayList<>();
         for (QueryHandler queryHandler : clients.values()) {
@@ -63,9 +66,21 @@ public class MatchModel {
     private void updatePlayerOpponents(Player client) {
         for (Player player : players) {
             if (!player.equals(client)) {
-                client.sendOpponentLocation(player.getLastLocation());
+                if (opponentIsInFOV(client, player)) {
+                    client.sendOpponentLocation(player.getLastLocation());
+                }
             }
         }
+    }
+
+    private boolean opponentIsInFOV(Player player, Player opponent) {
+        int playerVisionCenterX = Math.min(mapSizeX - 6, Math.max(5, player.getLastLocation().getX()));
+        int playerVisionCenterY = Math.min(mapSizeY - 6, Math.max(5, player.getLastLocation().getY()));
+        if (playerVisionCenterX - 6 < opponent.getLastLocation().getX() && opponent.getLastLocation().getX() < playerVisionCenterX + 6 &&
+                playerVisionCenterY - 6 < opponent.getLastLocation().getY() && opponent.getLastLocation().getY() < playerVisionCenterY + 6) {
+            return true;
+        }
+        return false;
     }
 
     private Location.UserLocation getRandomLocation() {
