@@ -7,7 +7,7 @@ import java.util.*;
 
 public class ItemHandler {
     private int numberOfItems = 15;
-    private Set<Integer> itemIdAwailable = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
+    private Set<Integer> itemIdAvailable = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
     private Map<Integer, List<Item>> itemsPerRow = new HashMap<>();
 
     public ItemHandler() {
@@ -29,8 +29,8 @@ public class ItemHandler {
         int itemType = 0;
         int x = (int) Math.round(Math.random() * (Maps.map[0].length - 1));
         int y = (int) Math.round(Math.random() * (Maps.map.length - 1));
-        while (!itemIdAwailable.contains(itemType)) {
-            itemType = (int) Math.round(Math.random()*itemIdAwailable.size());
+        while (!itemIdAvailable.contains(itemType)) {
+            itemType = (int) Math.round(Math.random()* itemIdAvailable.size());
         }
         while (!MapService.canGoToLocation(x, y)){
             x = (int) Math.round(Math.random() * Maps.map[0].length);
