@@ -6,6 +6,7 @@ import io.reactivex.subjects.ReplaySubject;
 import match.Player;
 import shared.errors.UnknownMessage;
 import shared.match.location.Location;
+import shared.match.player.Action;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
 
@@ -81,6 +82,9 @@ public class QueryHandler {
         return createMutation("matchLocation");
     }
 
+    public Observable<AbstractMessage> actionRequest() {
+        return createMutation("matchAction");
+    }
 
     public void sendData(String type, String message, AbstractMessage data) {
         try {
@@ -107,6 +111,10 @@ public class QueryHandler {
 
     public void updateHealth(AbstractMessage healthData) {
         updateWatchQueryData("matchHealth", healthData);
+    }
+
+    public void updateInventory(AbstractMessage inventoryData) {
+        updateWatchQueryData("matchInventory", inventoryData);
     }
 
     private ReplaySubject<AbstractMessage> createMutation(String mutationName) {
@@ -175,6 +183,9 @@ public class QueryHandler {
             case "matchLocation":
                 updateMutationData(messageName, Location.UserLocation.parseDelimitedFrom(getInputStream()));
                 break;
+            case "matchAction":
+                updateMutationData(messageName, Action.ActionData.parseDelimitedFrom(getInputStream()));
+                break;
             case "login":
                 updateMutationData(messageName, Auth.LoginData.parseDelimitedFrom(getInputStream()));
                 break;
@@ -209,6 +220,9 @@ public class QueryHandler {
                 updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             case "matchHealth":
+                updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
+                break;
+            case "matchInventory":
                 updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             default:

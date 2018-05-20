@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class ImageOpener {
     private static Map<String, Image> images = new HashMap<>();
-    private static List<String> fileNames = Arrays.asList("character.png", "grass.png", "rock.png", "water.png", "wall.png");
+    private static List<String> fileNames = Arrays.asList("character.png", "grass.png", "rock.png", "water.png", "wall.png", "sword.png", "pickaxe.png", "potion.png", "shield.png");
 
     public static Image getImage(String imageType) {
         String filename = imageType + ".png";
