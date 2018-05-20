@@ -3,21 +3,12 @@ package services;
 import enums.FlowerLifeCycle;
 import shared.match.location.Location;
 
-public class FlowerService {
-    private static FlowerService ourInstance;
+public class FlowerStageHandler {
+    private static FlowerStageHandler ourInstance;
     private ServerCommunicationService server = ServerCommunicationService.getInstance();
     private FlowerLifeCycle currentStage = FlowerLifeCycle.GROWING;
 
-    public FlowerService() {
-        getServerConnection();
-    }
-
-    public static FlowerService getInstance() {
-        if (ourInstance == null) ourInstance = new FlowerService();
-        return ourInstance;
-    }
-
-    private void getServerConnection() {
+    public FlowerStageHandler() {
         server.sendData("watchQuery", "flowerStage", Location.Filters.newBuilder().build());
 
         server.watchData("flowerStage").subscribe(data -> {
@@ -25,6 +16,12 @@ public class FlowerService {
             currentStage = FlowerLifeCycle.getCycle(flowerStage.getStage());
         });
     }
+
+    public static FlowerStageHandler getInstance() {
+        if (ourInstance == null) ourInstance = new FlowerStageHandler();
+        return ourInstance;
+    }
+
 
     public FlowerLifeCycle getCurrentStage() {
         return currentStage;
