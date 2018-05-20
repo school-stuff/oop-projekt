@@ -14,38 +14,24 @@ import shared.match.player.Inventory;
 public class GameService {
     private static GameService ourInstance = new GameService();
     private ServerCommunicationService server = ServerCommunicationService.getInstance();
-<<<<<<< HEAD
     private ReplaySubject<AbstractMessage> locationReplaySubject = ReplaySubject.create();
     private ReplaySubject<AbstractMessage> opponentLocationReplaySubject = ReplaySubject.create();
     private ReplaySubject<AbstractMessage> itemReplaySubject = ReplaySubject.create();
-=======
->>>>>>> aea0aba6b4d634c771bf16742cc029a5ba2a4247
+
 
     public static GameService getInstance() {
         return ourInstance;
     }
 
-    private final ReplaySubject<AbstractMessage> locationReplaySubject = ReplaySubject.create();
-    private final ReplaySubject<AbstractMessage> opponentLocationReplaySubject = ReplaySubject.create();
-
-<<<<<<< HEAD
-    public Observable<AbstractMessage> getOpponentLocation() {
-        return opponentLocationReplaySubject;
-    }
 
     public Observable<AbstractMessage> getItem() {
         return itemReplaySubject;
     }
 
-    private void getServerConnection() {
-        server.sendData("watchQuery", "matchLocation", Location.Filters.newBuilder().build());
-        server.sendData("watchQuery", "opponentLocation", Location.Filters.newBuilder().build());
-=======
     public GameService() {
         sendWatchQuery("matchLocation");
         sendWatchQuery("opponentLocation");
         sendWatchQuery("matchHealth");
->>>>>>> aea0aba6b4d634c771bf16742cc029a5ba2a4247
 
         server.watchData("matchLocation").subscribe(data -> {
             locationReplaySubject.onNext(data);

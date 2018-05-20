@@ -179,15 +179,11 @@ public class ServerCommunicationService {
             case "opponentLocation":
                 updateQueryData(prefix + messageName, Location.UserLocation.parseDelimitedFrom(getInput()));
                 break;
-<<<<<<< HEAD
             case "itemData":
                 updateQueryData(prefix + messageName, RenderItem.ItemData.parseDelimitedFrom(getInput()));
                 break;
-
-=======
             case "matchHealth":
                 updateQueryData(prefix + messageName, Health.HealthData.parseDelimitedFrom(getInput()));
->>>>>>> aea0aba6b4d634c771bf16742cc029a5ba2a4247
             default:
                 break;
         }
