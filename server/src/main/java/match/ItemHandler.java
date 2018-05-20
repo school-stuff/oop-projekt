@@ -2,6 +2,7 @@ package match;
 
 import battleFieldMap.Maps;
 import services.MapService;
+import shared.match.item.RenderItem;
 
 import java.util.*;
 
@@ -12,8 +13,20 @@ public class ItemHandler {
 
     public ItemHandler() {
         generateAmountOfItems();
-        System.out.println(itemsPerRow);
     }
+
+    public Set<RenderItem.ItemData> getItemsToRender(int x, int y) {
+        Set<RenderItem.ItemData> itemData = new HashSet<>();
+        for (int i = x - 5; i < x + 5; i++) {
+            for (Item item : itemsPerRow.get(i)) {
+                if (item.getY() > y - 5 && item.getY() < y + 5) {
+                    itemData.add(RenderItem.ItemData.newBuilder().setX(item.getX()).setY(item.getY()).setId(item.getId()).build());
+                }
+            }
+        }
+        return itemData;
+    }
+
 
     private void generateAmountOfItems() {
         for (int i = 0; i < numberOfItems; i++) {
@@ -38,4 +51,5 @@ public class ItemHandler {
         }
         return new Item(x, y, itemType);
     }
+
 }
