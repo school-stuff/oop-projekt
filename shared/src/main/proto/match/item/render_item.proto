@@ -7,3 +7,4 @@ message ItemData {
     int32 y = 2;
     int32 id = 3;
 }
+message Filters {}

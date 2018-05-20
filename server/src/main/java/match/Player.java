@@ -1,10 +1,10 @@
 package match;
 
-import models.MatchModel;
 import services.QueryHandler;
 import shared.match.item.RenderItem;
 import shared.match.location.Location;
 import shared.match.player.Health;
+import shared.match.player.Inventory;
 
 import java.util.Set;
 
@@ -12,17 +12,13 @@ public class Player {
 
     private Location.UserLocation locationRequest;
     private Location.UserLocation lastLocation;
+    private Inventory.InventoryData inventoryData;
+    private Health.HealthData healthData;
 
     private QueryHandler playerSocket;
-    private ItemHandler itemHandler;
 
     public Player(QueryHandler playerSocket, ItemHandler itemHandler) {
         this.playerSocket = playerSocket;
-        this.itemHandler = itemHandler;
-
-        playerSocket.locationRequest().subscribe(data -> {
-            locationRequest = (Location.UserLocation) data;
-        });
 
         playerSocket.createWatchQuery("matchLocation").subscribe(data -> {
             playerSocket.sendData("watchUpdate", "matchLocation", data);
@@ -39,19 +35,37 @@ public class Player {
         playerSocket.createWatchQuery("itemData").subscribe(data -> {
             playerSocket.sendData("watchUpdate", "itemData", data);
         });
+
+
+        playerSocket.createWatchQuery("matchInventory").subscribe(data -> {
+            playerSocket.sendData("watchUpdate", "matchInventory", data);
+        });
     }
 
-    public void updatePlayerLocation(Location.UserLocation location) {
-        if (locationRequest == null) {
-            lastLocation = location;
-        } else {
-            lastLocation = locationRequest;
-        }
-        if (MatchModel.canGoTo(location)) {
-            locationRequest = location;
-            playerSocket.updateLocation(location);
-            sendRenderedItems(itemHandler.getItemsToRender(location.getX(), location.getY()));
-        }
+    public QueryHandler getPlayerSocket() {
+        return playerSocket;
+    }
+
+    public void updatePlayerHealth(Health.HealthData healthData) {
+        this.healthData = healthData;
+        playerSocket.updateHealth(healthData);
+    }
+
+    public void updatePlayerInventory(Inventory.InventoryData inventoryData) {
+        this.inventoryData = inventoryData;
+        playerSocket.updateInventory(inventoryData);
+    }
+
+    public Health.HealthData getHealthData() {
+        return healthData;
+    }
+
+    public Inventory.InventoryData getInventoryData() {
+        return inventoryData;
+    }
+
+    public void sendOpponentLocation(Location.UserLocation location) {
+        playerSocket.updateOpponentLocation(location);
     }
 
     public void sendRenderedItems(Set<RenderItem.ItemData> itemData) {
@@ -60,19 +74,19 @@ public class Player {
         }
     }
 
-    public void updatePlayerHealth(Health.HealthData healthData) {
-        playerSocket.updateHealth(healthData);
-    }
-
-    public void sendOpponentLocation(Location.UserLocation location) {
-        playerSocket.updateOpponentLocation(location);
-    }
-
     public Location.UserLocation getLastLocation() {
         return lastLocation;
     }
 
     public Location.UserLocation getLocationRequest() {
         return locationRequest;
+    }
+
+    public void setLocationRequest(Location.UserLocation locationRequest) {
+        this.locationRequest = locationRequest;
+    }
+
+    public void setLastLocation(Location.UserLocation lastLocation) {
+        this.lastLocation = lastLocation;
     }
 }

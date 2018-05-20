@@ -9,6 +9,7 @@ import io.reactivex.subjects.ReplaySubject;
 import shared.match.item.RenderItem;
 import shared.match.location.Location;
 import shared.match.opponent.Alive;
+import shared.match.player.Action;
 import shared.match.player.Health;
 import shared.match.player.Inventory;
 
@@ -33,6 +34,7 @@ public class GameService {
         sendWatchQuery("matchLocation");
         sendWatchQuery("opponentLocation");
         sendWatchQuery("matchHealth");
+        sendWatchQuery("matchInventory");
 
         server.watchData("matchLocation").subscribe(data -> {
             locationReplaySubject.onNext(data);
@@ -88,5 +90,14 @@ public class GameService {
             Location.UserLocation location = Location.UserLocation.newBuilder().setX(x).setY(y).build();
             server.sendData("mutation", "matchLocation", location);
         }
+    }
+
+    public void interactWith(int x, int y) {
+        Action.ActionData action = Action.ActionData.newBuilder()
+                .setX(x)
+                .setY(y)
+                .setEquippedSlot(Player.slotEquipped.getValue())
+                .build();
+        server.sendData("mutation", "matchAction", action);
     }
 }

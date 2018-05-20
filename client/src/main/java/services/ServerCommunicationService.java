@@ -8,6 +8,7 @@ import javafx.application.Platform;
 import shared.match.item.RenderItem;
 import shared.match.location.Location;
 import shared.match.player.Health;
+import shared.match.player.Inventory;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
 
@@ -184,6 +185,10 @@ public class ServerCommunicationService {
                 break;
             case "matchHealth":
                 updateQueryData(prefix + messageName, Health.HealthData.parseDelimitedFrom(getInput()));
+                break;
+            case "matchInventory":
+                updateQueryData(prefix + messageName, Inventory.InventoryData.parseDelimitedFrom(getInput()));
+                break;
             default:
                 break;
         }
