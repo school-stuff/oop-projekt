@@ -1,5 +1,9 @@
 package enums;
 
+<<<<<<< HEAD
+=======
+import battlefield.Flower;
+>>>>>>> aea0aba6b4d634c771bf16742cc029a5ba2a4247
 import javafx.scene.image.Image;
 
 public enum FlowerLifeCycle {

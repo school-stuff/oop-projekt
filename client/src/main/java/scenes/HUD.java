@@ -2,6 +2,7 @@ package scenes;
 
 import enums.Item;
 import game.Player;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
@@ -51,9 +52,18 @@ public class HUD {
         healthValue.setMinWidth(50);
         armorValue.setMinWidth(50);
 
-        Player.health.subscribe(data -> healthValue.setText(data.toString()));
-        Player.armor.subscribe(data -> armorValue.setText(data.toString()));
-        Player.opponentsAlive.subscribe(data -> playersAliveValue.setText(data.toString()));
+        Player.health.subscribe(data -> {
+            Platform.runLater(() -> healthValue.setText(data.toString()));
+        });
+
+        Player.armor.subscribe(data -> {
+            Platform.runLater(() -> armorValue.setText(data.toString()));
+        });
+
+        Player.opponentsAlive.subscribe(data -> {
+            Platform.runLater(() -> playersAliveValue.setText(data.toString()));
+        });
+
         Player.slotEquipped.subscribe(data -> {
             for (Rectangle invBaseRectangle : invBaseRectangles) {
                 invBaseRectangle.setFill(Color.GRAY);

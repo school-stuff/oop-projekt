@@ -3,10 +3,7 @@ package services;
 import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
-import match.Item;
-import match.Player;
 import shared.errors.UnknownMessage;
-import shared.match.item.RenderItem;
 import shared.match.location.Location;
 import shared.match.plant.Flower;
 import shared.match.queue.Queue;
@@ -68,6 +65,10 @@ public class QueryHandler {
         return createWatchQuery("matchQueue");
     }
 
+    public Observable<AbstractMessage> getPlayerLocation() {
+        return createWatchQuery("matchLocation");
+    }
+
     public Observable<AbstractMessage> login() {
         return createMutation("login");
     }
@@ -80,14 +81,6 @@ public class QueryHandler {
         return createMutation("matchLocation");
     }
 
-    public Observable<AbstractMessage> getPlayerLocation() {
-        for (String watchQueryName : watchQueryList.keySet()) {
-            if (watchQueryName.equals("matchLocation")) {
-                return watchQueryList.get(watchQueryName);
-            }
-        }
-        return createWatchQuery("matchLocation");
-    }
 
     public void sendData(String type, String message, AbstractMessage data) {
         try {
@@ -96,7 +89,7 @@ public class QueryHandler {
             outputStream.writeUTF(message);
             data.writeDelimitedTo(outputStream);
         } catch (IOException e) {
-            throw new RuntimeException("Data not sent to client, exeption description :" + e);
+            throw new RuntimeException("Data not sent to client, exception description :" + e);
         }
     }
 
@@ -114,6 +107,10 @@ public class QueryHandler {
 
     public void updateItemData(AbstractMessage itemData) {
         updateWatchQueryData("itemData", itemData);
+    }
+
+    public void updateHealth(AbstractMessage healthData) {
+        updateWatchQueryData("matchHealth", healthData);
     }
 
     private ReplaySubject<AbstractMessage> createMutation(String mutationName) {
@@ -217,6 +214,8 @@ public class QueryHandler {
                 break;
             case "itemData":
                 updateWatchQueryData(messageName, Flower.Filters.parseDelimitedFrom(getInputStream()));
+            case "matchHealth":
+                updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             default:
                 handleUnknownMessage();
