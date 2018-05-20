@@ -3,10 +3,7 @@ package scenes;
 
 import battlefield.*;
 import com.google.protobuf.AbstractMessage;
-import enums.Direction;
-import enums.InventorySelection;
-import enums.KeyPress;
-import enums.SquareTypes;
+import enums.*;
 import game.Player;
 import io.reactivex.Observable;
 import javafx.application.Platform;
@@ -40,22 +37,30 @@ public class BattleFieldScene {
         createView();
         showScene(render);
         render.addEKeyEventHandler(KeyEvent.KEY_PRESSED, event -> handleKeyEvent(event));
+        Player.slotEquipped.onNext(0);
         createObserver();
     }
 
     public void handleKeyEvent(KeyEvent event) {
         for (KeyPress keyPress : keyPresses) {
             if (keyPress.getKeyCode() == event.getCode()) {
-                if (keyPress.getClass() == Direction.class) {
-                    Direction direction = (Direction) keyPress;
-                    int newX = userLocation.getPlayerX() + direction.getX();
-                    int newY = userLocation.getPlayerY() + direction.getY();
-                    GameService.getInstance().sendLocationRequest(newX, newY);
-                    break;
-                }
-                if (keyPress.getClass() == InventorySelection.class) {
-                    InventorySelection inventorySelection = (InventorySelection) keyPress;
-                    Player.slotEquipped.onNext(inventorySelection.getValue());
+                if (event.isAltDown()) {
+                    if (keyPress instanceof Direction) {
+                        Direction direction = (Direction) keyPress;
+                        GameService.getInstance().interactWith(direction.getX(), direction.getY());
+                    }
+                    // TODO:
+                    // else if (keyPress instanceof InventorySelection) Player.dropSlot(((InventorySelection)keyPress).getValue());
+                } else {
+                    if (keyPress instanceof Direction) {
+                        Direction direction = (Direction) keyPress;
+                        int newX = userLocation.getPlayerX() + direction.getX();
+                        int newY = userLocation.getPlayerY() + direction.getY();
+                        GameService.getInstance().sendLocationRequest(newX, newY);
+                    } else if (keyPress instanceof InventorySelection) {
+                        InventorySelection inventorySelection = (InventorySelection) keyPress;
+                        Player.slotEquipped.onNext(inventorySelection.getValue());
+                    }
                 }
             }
         }
@@ -125,6 +130,7 @@ public class BattleFieldScene {
         keyPresses = new ArrayList<>();
         keyPresses.addAll(Arrays.asList(Direction.values()));
         keyPresses.addAll(Arrays.asList(InventorySelection.values()));
+        keyPresses.addAll(Arrays.asList(Action.values()));
     }
 
     public void addImageLayer(String type, int x, int y) {

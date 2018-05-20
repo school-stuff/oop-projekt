@@ -1,0 +1,15 @@
+syntax = 'proto3';
+
+package shared.match.player;
+
+message ActionData {
+    oneof equippedSlot_oneof {
+        int32 equippedSlot = 1;
+    }
+    oneof x_oneof {
+        int32 x = 2;
+    }
+    oneof y_oneof {
+        int32 y = 3;
+    }
+}
