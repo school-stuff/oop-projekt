@@ -7,7 +7,8 @@ import shared.match.item.RenderItem;
 import java.util.*;
 
 public class ItemHandler {
-    private int numberOfItems = 15;
+    private int halfOfRenderedSquare = 5;
+    private int numberOfItems = 50;
     private Set<Integer> itemIdAvailable = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
     private Map<Integer, List<Item>> itemsPerRow = new HashMap<>();
 
@@ -16,14 +17,21 @@ public class ItemHandler {
     }
 
     public Set<RenderItem.ItemData> getItemsToRender(int x, int y) {
+        int firstRenderedRow = (y - halfOfRenderedSquare > 0) ? y - halfOfRenderedSquare : Maps.map.length - 1;
+        int lastRenderedRow = (y + halfOfRenderedSquare > 11) ? y + halfOfRenderedSquare : 0;
+        int firstRenderedColumn = (x - halfOfRenderedSquare > 0) ? x - halfOfRenderedSquare : Maps.map[0].length - 1;
+        int lastRenderedColumn = (x + halfOfRenderedSquare > Maps.map[0].length) ? Maps.map[0].length -1 : x + halfOfRenderedSquare;
+
         Set<RenderItem.ItemData> itemData = new HashSet<>();
-        for (int i = x - 5; i < x + 5; i++) {
+        for (int i = firstRenderedColumn; i < lastRenderedColumn + 1; i++) {
+            if (!itemsPerRow.containsKey(i)) continue;
             for (Item item : itemsPerRow.get(i)) {
-                if (item.getY() > y - 5 && item.getY() < y + 5) {
+                if (item.getY() > firstRenderedRow && item.getY() < lastRenderedRow) {
                     itemData.add(RenderItem.ItemData.newBuilder().setX(item.getX()).setY(item.getY()).setId(item.getId()).build());
                 }
             }
         }
+        System.out.println(itemData.size());
         return itemData;
     }
 
@@ -36,7 +44,9 @@ public class ItemHandler {
                 itemsPerRow.get(item.getX()).add(item);
             }
         }
+        System.out.println(itemsPerRow);
     }
+
 
     private Item generateRandomItem() {
         int itemType = 0;

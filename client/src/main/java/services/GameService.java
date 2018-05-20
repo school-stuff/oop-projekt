@@ -11,13 +11,12 @@ import shared.match.opponent.Alive;
 import shared.match.player.Health;
 import shared.match.player.Inventory;
 
-import java.io.IOException;
-
 public class GameService {
     private static GameService ourInstance = new GameService();
     private ServerCommunicationService server = ServerCommunicationService.getInstance();
     private ReplaySubject<AbstractMessage> locationReplaySubject = ReplaySubject.create();
     private ReplaySubject<AbstractMessage> opponentLocationReplaySubject = ReplaySubject.create();
+    private ReplaySubject<AbstractMessage> itemReplaySubject = ReplaySubject.create();
 
     public static GameService getInstance() {
         return ourInstance;
@@ -33,6 +32,10 @@ public class GameService {
 
     public Observable<AbstractMessage> getOpponentLocation() {
         return opponentLocationReplaySubject;
+    }
+
+    public Observable<AbstractMessage> getItem() {
+        return itemReplaySubject;
     }
 
     private void getServerConnection() {
@@ -68,6 +71,11 @@ public class GameService {
         server.watchData("matchOpponentAlive").subscribe(data -> {
             Alive.AliveData result = (Alive.AliveData) data;
             Player.opponentsAlive.onNext(result.getPlayersAlive());
+        });
+
+        server.watchData("itemData").subscribe(data -> {
+            System.out.println("got item");
+            itemReplaySubject.onNext(data);
         });
     }
 

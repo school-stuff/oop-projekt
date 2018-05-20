@@ -3,9 +3,12 @@ package services;
 import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import match.Item;
 import match.Player;
 import shared.errors.UnknownMessage;
+import shared.match.item.RenderItem;
 import shared.match.location.Location;
+import shared.match.plant.Flower;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
 
@@ -109,6 +112,10 @@ public class QueryHandler {
         updateWatchQueryData("opponentLocation", location);
     }
 
+    public void updateItemData(AbstractMessage itemData) {
+        updateWatchQueryData("itemData", itemData);
+    }
+
     private ReplaySubject<AbstractMessage> createMutation(String mutationName) {
         ReplaySubject<AbstractMessage> mutation = mutationResponseList.get(mutationName);
         if (mutation == null) {
@@ -207,6 +214,9 @@ public class QueryHandler {
                 break;
             case "opponentLocation":
                 updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
+                break;
+            case "itemData":
+                updateWatchQueryData(messageName, Flower.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             default:
                 handleUnknownMessage();

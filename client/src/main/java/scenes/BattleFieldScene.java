@@ -2,25 +2,21 @@ package scenes;
 
 
 import battlefield.*;
-import com.google.protobuf.AbstractMessage;
-import enums.Direction;
-import enums.InventorySelection;
-import enums.KeyPress;
-import enums.SquareTypes;
+import enums.*;
 import game.Player;
-import io.reactivex.Observable;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
+import shared.match.item.RenderItem;
 import shared.match.location.Location;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -72,6 +68,12 @@ public class BattleFieldScene {
                 showOpponent((Location.UserLocation) data);
             });
         });
+        GameService.getInstance().getItem().subscribe(data -> {
+            Platform.runLater(() -> {
+                System.out.println("adding ImageLayer");
+                showItem((RenderItem.ItemData) data);
+            });
+        });
         GameService.getInstance().getCharacterLocation().subscribe(data -> {
             Platform.runLater(() -> {
                 userLocation = new RenderedArea(
@@ -117,6 +119,15 @@ public class BattleFieldScene {
         int relativeToUserY = location.getY() - userLocation.getPlayerY();
         addImageLayer(
                 "character",
+                userLocation.renderedX() + relativeToUserX,
+                userLocation.renderedY() + relativeToUserY);
+    }
+
+    private void showItem(RenderItem.ItemData itemData) {
+        int relativeToUserX = itemData.getX() - userLocation.getPlayerX();
+        int relativeToUserY = itemData.getY() - userLocation.getPlayerY();
+        String image = Item.fromId(itemData.getId()).getImageType();
+        addImageLayer(image,
                 userLocation.renderedX() + relativeToUserX,
                 userLocation.renderedY() + relativeToUserY);
     }

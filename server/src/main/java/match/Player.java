@@ -2,7 +2,10 @@ package match;
 
 import models.MatchModel;
 import services.QueryHandler;
+import shared.match.item.RenderItem;
 import shared.match.location.Location;
+
+import java.util.Set;
 
 public class Player {
 
@@ -10,9 +13,11 @@ public class Player {
     private Location.UserLocation lastLocation;
 
     private QueryHandler playerSocket;
+    private ItemHandler itemHandler;
 
-    public Player(QueryHandler playerSocket) {
+    public Player(QueryHandler playerSocket, ItemHandler itemHandler) {
         this.playerSocket = playerSocket;
+        this.itemHandler = itemHandler;
 
         playerSocket.locationRequest().subscribe(data -> {
             locationRequest = (Location.UserLocation) data;
@@ -36,6 +41,14 @@ public class Player {
         if (MatchModel.canGoTo(location)) {
             locationRequest = location;
             playerSocket.updateLocation(location);
+            sendRenderedItems(itemHandler.getItemsToRender(location.getX(), location.getY()));
+            System.out.println("rendered items sent");
+        }
+    }
+
+    public void sendRenderedItems(Set<RenderItem.ItemData> itemData) {
+        for (RenderItem.ItemData item : itemData) {
+            playerSocket.updateItemData(item);
         }
     }
 

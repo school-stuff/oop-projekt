@@ -5,6 +5,7 @@ import com.google.protobuf.DescriptorProtos;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
 import javafx.application.Platform;
+import shared.match.item.RenderItem;
 import shared.match.location.Location;
 import shared.match.queue.Queue;
 import shared.user.auth.Auth;
@@ -177,6 +178,10 @@ public class ServerCommunicationService {
             case "opponentLocation":
                 updateQueryData(prefix + messageName, Location.UserLocation.parseDelimitedFrom(getInput()));
                 break;
+            case "itemData":
+                updateQueryData(prefix + messageName, RenderItem.ItemData.parseDelimitedFrom(getInput()));
+                break;
+
             default:
                 break;
         }

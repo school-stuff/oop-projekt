@@ -20,7 +20,7 @@ public class MatchModel {
         itemHandler = new ItemHandler();
         players = new ArrayList<>();
         for (QueryHandler queryHandler : clients.values()) {
-            players.add(new Player(queryHandler));
+            players.add(new Player(queryHandler, itemHandler));
         }
         for (Player player : players) {
             player.updatePlayerLocation(generateFirstLocation());
