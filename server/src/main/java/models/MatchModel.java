@@ -1,6 +1,7 @@
 package models;
 
 import battleFieldMap.Maps;
+import match.ItemHandler;
 import match.Player;
 import services.MapService;
 import services.QueryHandler;
@@ -13,8 +14,10 @@ import java.util.Map;
 
 public class MatchModel {
     private final List<Player> players;
+    private final ItemHandler itemHandler;
 
     public MatchModel(Map<Auth.LoginData, QueryHandler> clients) {
+        itemHandler = new ItemHandler();
         players = new ArrayList<>();
         for (QueryHandler queryHandler : clients.values()) {
             players.add(new Player(queryHandler));
