@@ -70,7 +70,6 @@ public class BattleFieldScene {
         });
         GameService.getInstance().getItem().subscribe(data -> {
             Platform.runLater(() -> {
-                System.out.println("adding ImageLayer");
                 showItem((RenderItem.ItemData) data);
             });
         });
@@ -124,12 +123,10 @@ public class BattleFieldScene {
     }
 
     private void showItem(RenderItem.ItemData itemData) {
-        int relativeToUserX = itemData.getX() - userLocation.getPlayerX();
-        int relativeToUserY = itemData.getY() - userLocation.getPlayerY();
         String image = Item.fromId(itemData.getId()).getImageType();
         addImageLayer(image,
-                userLocation.renderedX() + relativeToUserX,
-                userLocation.renderedY() + relativeToUserY);
+                itemData.getX(),
+                itemData.getY());
     }
       
     private void createKeyPressesList() {

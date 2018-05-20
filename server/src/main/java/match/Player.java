@@ -35,6 +35,10 @@ public class Player {
         playerSocket.createWatchQuery("matchHealth").subscribe(data -> {
             playerSocket.sendData("watchUpdate", "matchHealth", data);
         });
+
+        playerSocket.createWatchQuery("itemData").subscribe(data -> {
+            playerSocket.sendData("watchUpdate", "itemData", data);
+        });
     }
 
     public void updatePlayerLocation(Location.UserLocation location) {
@@ -47,7 +51,6 @@ public class Player {
             locationRequest = location;
             playerSocket.updateLocation(location);
             sendRenderedItems(itemHandler.getItemsToRender(location.getX(), location.getY()));
-            System.out.println("rendered items sent");
         }
     }
 

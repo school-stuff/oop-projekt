@@ -9,7 +9,7 @@ import java.util.*;
 public class ItemHandler {
     private int halfOfRenderedSquare = 5;
     private int numberOfItems = 50;
-    private Set<Integer> itemIdAvailable = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5));
+    private Set<Integer> itemIdAvailable = new HashSet<>(Arrays.asList(1, 2, 3, 4));
 
     private Map<Integer, List<Item>> itemsPerRow = new HashMap<>();
 
@@ -18,22 +18,38 @@ public class ItemHandler {
     }
 
     public Set<RenderItem.ItemData> getItemsToRender(int x, int y) {
-        int firstRenderedRow = (y - halfOfRenderedSquare > 0) ? y - halfOfRenderedSquare : Maps.map.length - 1;
-        int lastRenderedRow = (y + halfOfRenderedSquare > 11) ? y + halfOfRenderedSquare : 0;
-        int firstRenderedColumn = (x - halfOfRenderedSquare > 0) ? x - halfOfRenderedSquare : Maps.map[0].length - 1;
-        int lastRenderedColumn = (x + halfOfRenderedSquare > Maps.map[0].length) ? Maps.map[0].length - 1 : x + halfOfRenderedSquare;
+        int firstRenderedRow = getFirstRenderedIndex(y);
+        int lastRenderedRow = firstRenderedRow + 10;
+        int firstRenderedColumn = getFirstRenderedIndex(x);
+        int lastRenderedColumn = firstRenderedColumn + 10;
 
         Set<RenderItem.ItemData> itemData = new HashSet<>();
         for (int i = firstRenderedColumn; i < lastRenderedColumn + 1; i++) {
             if (!itemsPerRow.containsKey(i)) continue;
             for (Item item : itemsPerRow.get(i)) {
-                if (item.getY() > firstRenderedRow && item.getY() < lastRenderedRow) {
-                    itemData.add(RenderItem.ItemData.newBuilder().setX(item.getX()).setY(item.getY()).setId(item.getId()).build());
+                if (item.getY() >= firstRenderedRow && item.getY() <= lastRenderedRow) {
+                    itemData.add(RenderItem.ItemData.newBuilder().
+                            setX(item.getX() - firstRenderedColumn).
+                            setY(item.getY() - firstRenderedRow).
+                            setId(item.getId()).build());
                 }
             }
         }
-        System.out.println(itemData.size());
         return itemData;
+    }
+
+    private int getFirstRenderedIndex(int y) {
+        int firstRenderedRow = y - halfOfRenderedSquare;
+
+
+        if(y <= halfOfRenderedSquare) {
+            firstRenderedRow = 0;
+        }
+
+        if (y > 49 - halfOfRenderedSquare) {
+            firstRenderedRow = 49 - 10;
+        }
+        return firstRenderedRow;
     }
 
     private void generateAmountOfItems() {
@@ -48,8 +64,8 @@ public class ItemHandler {
 
     private Item generateRandomItem() {
         int itemType = 0;
-        int x = (int) Math.round(Math.random() * (Maps.map[0].length - 1));
-        int y = (int) Math.round(Math.random() * (Maps.map.length - 1));
+        int x = (int) Math.round(Math.random() * (Maps.map[0].length - 2));
+        int y = (int) Math.round(Math.random() * (Maps.map.length - 2));
         while (!itemIdAvailable.contains(itemType)) {
             itemType = (int) Math.round(Math.random() * itemIdAvailable.size());
         }

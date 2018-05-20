@@ -6,6 +6,7 @@ import battlefield.BattleFieldMap;
 import game.Player;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import shared.match.item.RenderItem;
 import shared.match.location.Location;
 import shared.match.opponent.Alive;
 import shared.match.player.Health;
@@ -65,7 +66,6 @@ public class GameService {
         });
 
         server.watchData("itemData").subscribe(data -> {
-            System.out.println("got item");
             itemReplaySubject.onNext(data);
         });
     }

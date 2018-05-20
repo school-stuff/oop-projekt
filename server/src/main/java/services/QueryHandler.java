@@ -4,6 +4,7 @@ import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
 import shared.errors.UnknownMessage;
+import shared.match.item.RenderItem;
 import shared.match.location.Location;
 import shared.match.plant.Flower;
 import shared.match.queue.Queue;
@@ -35,7 +36,6 @@ public class QueryHandler {
                     DataInputStream inputStream = new DataInputStream(socket.getInputStream())
             ) {
                 while (true) {
-
                     String messageType = inputStream.readUTF();
                     String messageName = inputStream.readUTF();
 
@@ -213,7 +213,7 @@ public class QueryHandler {
                 updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;
             case "itemData":
-                updateWatchQueryData(messageName, Flower.Filters.parseDelimitedFrom(getInputStream()));
+                updateWatchQueryData(messageName, RenderItem.Filters.parseDelimitedFrom(getInputStream()));
             case "matchHealth":
                 updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;
