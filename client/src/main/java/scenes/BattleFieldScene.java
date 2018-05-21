@@ -1,11 +1,11 @@
 package scenes;
 
 
-import battlefield.*;
-import com.google.protobuf.AbstractMessage;
+import battlefield.BattleFieldMap;
+import battlefield.BattleFieldSquare;
+import battlefield.RenderedArea;
 import enums.*;
 import game.Player;
-import io.reactivex.Observable;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -15,9 +15,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import services.GameService;
+import shared.match.item.RenderItem;
 import shared.match.location.Location;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -77,6 +77,11 @@ public class BattleFieldScene {
                 showOpponent((Location.UserLocation) data);
             });
         });
+        GameService.getInstance().getItem().subscribe(data -> {
+            Platform.runLater(() -> {
+                showItem((RenderItem.ItemData) data);
+            });
+        });
         GameService.getInstance().getCharacterLocation().subscribe(data -> {
             Platform.runLater(() -> {
                 userLocation = new RenderedArea(
@@ -124,6 +129,13 @@ public class BattleFieldScene {
                 "character",
                 userLocation.renderedX() + relativeToUserX,
                 userLocation.renderedY() + relativeToUserY);
+    }
+
+    private void showItem(RenderItem.ItemData itemData) {
+        String image = Item.fromId(itemData.getId()).getImageType();
+        addImageLayer(image,
+                itemData.getX(),
+                itemData.getY());
     }
       
     private void createKeyPressesList() {

@@ -2,14 +2,15 @@ package match;
 
 import com.google.protobuf.AbstractMessage;
 import services.QueryHandler;
+import shared.match.plant.Flower;
 
-public class Flower {
+public class FlowerGarden {
     private int[] lifeCycle = {10, 4, 4};
     private int stageCount = 0;
     private int lifeCycleCount = lifeCycle[0];
     private QueryHandler queryHandler;
 
-    public Flower(QueryHandler queryHandler) {
+    public FlowerGarden(QueryHandler queryHandler) {
         this.queryHandler = queryHandler;
     }
 
@@ -18,7 +19,7 @@ public class Flower {
         if (lifeCycleCount == 0) {
             stageCount++;
             if (stageCount > 2) stageCount = 0;
-            sendCycleChange(shared.match.plant.Flower.FlowerCycleChange.newBuilder().setStage(stageCount).build());
+            sendCycleChange(Flower.FlowerCycleChange.newBuilder().setStage(stageCount).build());
             lifeCycleCount = lifeCycle[stageCount];
         }
     }

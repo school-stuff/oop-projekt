@@ -74,7 +74,7 @@ public class HUD {
         Player.inventory.subscribe(data -> {
             for (int i = 0; i < 6; i++) {
                 if (Item.fromId(data[i]).getId() != 0) {
-                    ImageView imageView = new ImageView(Item.fromId(data[i]).getImage());
+                    ImageView imageView = new ImageView(ImageOpener.getImage(Item.fromId(data[i]).getImageType()));
                     inventoryBasePane.add(imageView, i, 0);
                 }
             }

@@ -3,8 +3,8 @@ package services;
 import com.google.protobuf.AbstractMessage;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
-import match.Player;
 import shared.errors.UnknownMessage;
+import shared.match.item.RenderItem;
 import shared.match.location.Location;
 import shared.match.player.Action;
 import shared.match.queue.Queue;
@@ -36,7 +36,6 @@ public class QueryHandler {
                     DataInputStream inputStream = new DataInputStream(socket.getInputStream())
             ) {
                 while (true) {
-
                     String messageType = inputStream.readUTF();
                     String messageName = inputStream.readUTF();
 
@@ -107,6 +106,10 @@ public class QueryHandler {
 
     public void updateOpponentLocation(AbstractMessage location) {
         updateWatchQueryData("opponentLocation", location);
+    }
+
+    public void updateItemData(AbstractMessage itemData) {
+        updateWatchQueryData("itemData", itemData);
     }
 
     public void updateHealth(AbstractMessage healthData) {
@@ -219,6 +222,8 @@ public class QueryHandler {
             case "opponentLocation":
                 updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;
+            case "itemData":
+                updateWatchQueryData(messageName, RenderItem.Filters.parseDelimitedFrom(getInputStream()));
             case "matchHealth":
                 updateWatchQueryData(messageName, Location.Filters.parseDelimitedFrom(getInputStream()));
                 break;

@@ -1,0 +1,10 @@
+syntax = 'proto3';
+
+package shared.match.item;
+
+message ItemData {
+    int32 x = 1;
+    int32 y = 2;
+    int32 id = 3;
+}
+message Filters {}

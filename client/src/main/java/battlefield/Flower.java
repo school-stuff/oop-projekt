@@ -1,14 +1,15 @@
 package battlefield;
 
 import enums.FlowerLifeCycle;
-import services.FlowerService;
+import services.FlowerGardener;
 
 public class Flower extends BattleFieldSquare {
-    private FlowerLifeCycle stage = FlowerLifeCycle.GROWING;
 
+    private FlowerLifeCycle stage;
     public Flower() {
         super();
-        addLayer(FlowerService.getInstance().getCurrentStage().getImage());
+        stage = FlowerGardener.getInstance().getCurrentStage();
+        addLayer(stage.getImage());
     }
 
     @Override

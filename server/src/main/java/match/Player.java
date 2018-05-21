@@ -1,9 +1,12 @@
 package match;
 
 import services.QueryHandler;
+import shared.match.item.RenderItem;
 import shared.match.location.Location;
 import shared.match.player.Health;
 import shared.match.player.Inventory;
+
+import java.util.Set;
 
 public class Player {
 
@@ -12,9 +15,9 @@ public class Player {
     private Inventory.InventoryData inventoryData;
     private Health.HealthData healthData;
 
-    private final QueryHandler playerSocket;
+    private QueryHandler playerSocket;
 
-    public Player(QueryHandler playerSocket) {
+    public Player(QueryHandler playerSocket, ItemHandler itemHandler) {
         this.playerSocket = playerSocket;
 
         playerSocket.createWatchQuery("matchLocation").subscribe(data -> {
@@ -28,6 +31,11 @@ public class Player {
         playerSocket.createWatchQuery("matchHealth").subscribe(data -> {
             playerSocket.sendData("watchUpdate", "matchHealth", data);
         });
+
+        playerSocket.createWatchQuery("itemData").subscribe(data -> {
+            playerSocket.sendData("watchUpdate", "itemData", data);
+        });
+
 
         playerSocket.createWatchQuery("matchInventory").subscribe(data -> {
             playerSocket.sendData("watchUpdate", "matchInventory", data);
@@ -58,6 +66,12 @@ public class Player {
 
     public void sendOpponentLocation(Location.UserLocation location) {
         playerSocket.updateOpponentLocation(location);
+    }
+
+    public void sendRenderedItems(Set<RenderItem.ItemData> itemData) {
+        for (RenderItem.ItemData item : itemData) {
+            playerSocket.updateItemData(item);
+        }
     }
 
     public Location.UserLocation getLastLocation() {

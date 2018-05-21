@@ -3,7 +3,6 @@ package models;
 import battleFieldMap.Maps;
 import enums.Item;
 import match.ItemHandler;
-import javafx.application.Platform;
 import match.Player;
 import services.MapService;
 import services.QueryHandler;
@@ -21,6 +20,7 @@ public class MatchModel {
     private final List<Player> players;
     private final ItemHandler itemHandler;
 
+
     private final int mapSizeX = Maps.map.length;
     private final int mapSizeY = Maps.map[0].length;
 
@@ -28,7 +28,7 @@ public class MatchModel {
         itemHandler = new ItemHandler();
         players = new ArrayList<>();
         for (QueryHandler queryHandler : clients.values()) {
-            players.add(new Player(queryHandler));
+            players.add(new Player(queryHandler, itemHandler));
         }
         for (Player player : players) {
             updatePlayerLocation(player, generateFirstLocation(player));
@@ -75,6 +75,9 @@ public class MatchModel {
         for (Player player : players) {
             updatePlayerLocation(player, player.getLocationRequest());
             updatePlayerOpponents(player);
+
+            player.sendRenderedItems(itemHandler.getItemsToRender(player.getLocationRequest().getX(),
+                    player.getLocationRequest().getY()));
         }
     }
 
@@ -181,4 +184,6 @@ public class MatchModel {
     private Location.UserLocation getRandomLocation() {
         return Location.UserLocation.newBuilder().setX((int) Math.round(Math.random() * Maps.map[0].length)).setY((int) Math.round(Math.random() * Maps.map.length)).build();
     }
+
+
 }

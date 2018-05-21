@@ -1,0 +1,7 @@
+syntax = 'proto3';
+
+package shared.match.item;
+
+message FlowerCycleChange {
+    int32 stage = 1;
+}

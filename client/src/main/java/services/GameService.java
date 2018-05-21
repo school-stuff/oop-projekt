@@ -6,24 +6,29 @@ import battlefield.BattleFieldMap;
 import game.Player;
 import io.reactivex.Observable;
 import io.reactivex.subjects.ReplaySubject;
+import shared.match.item.RenderItem;
 import shared.match.location.Location;
 import shared.match.opponent.Alive;
 import shared.match.player.Action;
 import shared.match.player.Health;
 import shared.match.player.Inventory;
 
-import java.io.IOException;
-
 public class GameService {
     private static GameService ourInstance = new GameService();
     private ServerCommunicationService server = ServerCommunicationService.getInstance();
+    private ReplaySubject<AbstractMessage> locationReplaySubject = ReplaySubject.create();
+    private ReplaySubject<AbstractMessage> opponentLocationReplaySubject = ReplaySubject.create();
+    private ReplaySubject<AbstractMessage> itemReplaySubject = ReplaySubject.create();
+
 
     public static GameService getInstance() {
         return ourInstance;
     }
 
-    private final ReplaySubject<AbstractMessage> locationReplaySubject = ReplaySubject.create();
-    private final ReplaySubject<AbstractMessage> opponentLocationReplaySubject = ReplaySubject.create();
+
+    public Observable<AbstractMessage> getItem() {
+        return itemReplaySubject;
+    }
 
     public GameService() {
         sendWatchQuery("matchLocation");
@@ -60,6 +65,10 @@ public class GameService {
         server.watchData("matchOpponentAlive").subscribe(data -> {
             Alive.AliveData result = (Alive.AliveData) data;
             Player.opponentsAlive.onNext(result.getPlayersAlive());
+        });
+
+        server.watchData("itemData").subscribe(data -> {
+            itemReplaySubject.onNext(data);
         });
     }
 
